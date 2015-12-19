@@ -55,66 +55,156 @@
 
         \section{Latar Belakang}
             Semakin berkembangnya internet di masyarakat membuat penggunaan aplikasi berbasis web semakin diminati. Pengguna aplikasi berbasis web ini dapat dijumpai diberbagai aktivitas harian masyarakat, diantaranya bank \emph{online}, \emph{e-commerce}, reservasi tempat secara \emph{online}, bahkan pendaftaran peserta didik baru secara \emph{online}. Hal ini membuat penyedia layanan aplikasi berbasis web harus menyediakan servis yang layak sehingga aplikasi tetap berjalan dengan baik walaupun pengguna semakin bertambah.\\
-\indent Terjadinya \emph{bottleneck} (penumpukan permintaan) menjadi tantangan tersendiri ketika pengembang tidak memperhatikan sumber dayanya dan berujung pada gagalnya permintaan pengguna [1]. Muncul gagasan awal dengan penggunaan kelompok server yang akan menangani permintaan ini. Kelompok server ini akan secara bergantian melayani setiap permintaan terhadap aplikasi berbasis web ini. Dengan adanya tugas bergantian ini dibutuhkan sebuah komputer yang bertugas membagi beban kerja kelompok server. Komputer ini biasa disebut pembagi muat atau \emph{load balance}. Sistem kerja dari \emph{load balancer} ini menggunakan sebuah algoritma yang sudah ditanam untuk kemudian digunakan untuk memilih komputer mana yang harus melayani permintaan pengguna. \\
-\indent Di sisi lain sebuah aplikasi berbasis web memiliki dua jenis halaman yang mungkin di akses. Yang pertama adalah halaman berisi informasi, baik hasil \emph{query} basis data maupun tidak, selanjutnya disebut halaman informasi dan yang kedua adalah halaman yang digunakan untuk mengirimkan data ke server, dalam hal ini berupa form pengisian informasi, selanjutnya disebut halaman daftar. \\
-\indent Dua jenis halaman ini memiliki kebutuhan yang berbeda. Untuk halaman informasi, pengguna mengharapkan akses yang cepat sedangkan untuk halaman daftar, pengguna mengharapkan data yang dimasukkan dapat diproses dengan aman. Padahal di dalam penggunaan algoritma sebelumnya dan dengan teknologi yang ada, \emph{load balancer} tidak dapat memisahkan dua jenis permintaan ini. Algoritma yang ada sebelumnya hanya memisahkan banyak permintaan sesuai dengan ketersediaan server melayani pengguna. Padahal ketika proses pemasukkan data di dalam halaman daftar, seharusnya bisa digunakan untuk melayani permintaan pada halaman informasi. \\
-\indent Muncullah gagasan lain mengenai pengelompokkan permintaan berdasarkan konten yang diinginkan oleh pengguna. Pengelompokkan ini didasarkan pada dua halaman sebelumnya, yakni halaman informasi dan halaman daftar. Tujuannya untuk mengatur penggunaan sumber daya yang digunakan. Dua kelompok server terpisah akan melayani masing-masing permintaan yang berbeda. Dengan permintaan satu tipe dalam satu kelompok server, membuat kerja server menjadi lebih terpusat dan mengurangi beban yang besar. \\
-\indent Berbeda dengan yang terjadi saat ini, sebuah server atau bahkan dalam sebuah kelompok server, harus melayani berbagai bentuk permintaan dari pengguna, sehingga menyebabkan beban kerja server meningkat. Bahkan waktu dalam penyelesaian suatu permintaan tidak dapat diukur dalam satuan waktu yang sama karena berbedanya bentuk permintaan pengguna. \\
-\indent Sementara itu di dalam kelompok server yang bekerja bergantian melayani permintaan, ada kalanya sebuah server mengalami gangguan dan sama sekali tidak dapat melayani setiap permintaan pengguna. Padahal setiap permintaan yang ada masih diteruskan oleh load balancer pada server tersebut. Tidak adanya mekanisme untuk memindahkan permintaan dari server mati ke server yang masih aktif membuat akses ke sebuah web menjadi tidak maksimal.
-Oleh karena itu dibangunlah sistem ini. Dengan adanya sistem load balancing menggunakan algoritma berbasis konten yang memisahkan antara halaman informasi dan halaman daftar diharapkan dapat meningkatkan jumlah pengguna suatu halaman web dengan banyaknya bentuk permintaan dari pengguna.
+			\indent Terjadinya \emph{bottleneck} (penumpukan permintaan) menjadi tantangan tersendiri ketika pengembang tidak memperhatikan sumber dayanya dan berujung pada gagalnya permintaan pengguna [1]. Muncul gagasan awal dengan penggunaan kelompok server yang akan menangani permintaan ini. Kelompok server ini akan secara bergantian melayani setiap permintaan terhadap aplikasi berbasis web ini. Dengan adanya tugas bergantian ini dibutuhkan sebuah komputer yang bertugas membagi beban kerja kelompok server. Komputer ini biasa disebut pembagi muat atau \emph{load balance}. Sistem kerja dari \emph{load balancer} ini menggunakan sebuah algoritma yang sudah ditanam untuk kemudian digunakan untuk memilih komputer mana yang harus melayani permintaan pengguna. \\
+			\indent Di sisi lain sebuah aplikasi berbasis web memiliki dua jenis halaman yang mungkin di akses. Yang pertama adalah halaman berisi informasi, baik hasil \emph{query} basis data maupun tidak, selanjutnya disebut halaman informasi dan yang kedua adalah halaman yang digunakan untuk mengirimkan data ke server, dalam hal ini berupa form pengisian informasi, selanjutnya disebut halaman daftar. \\
+			\indent Dua jenis halaman ini memiliki kebutuhan yang berbeda. Untuk halaman informasi, pengguna mengharapkan akses yang cepat sedangkan untuk halaman daftar, pengguna mengharapkan data yang dimasukkan dapat diproses dengan aman. Padahal di dalam penggunaan algoritma sebelumnya dan dengan teknologi yang ada, \emph{load balancer} tidak dapat memisahkan dua jenis permintaan ini. Algoritma yang ada sebelumnya hanya memisahkan banyak permintaan sesuai dengan ketersediaan server melayani pengguna. Padahal ketika proses pemasukkan data di dalam halaman daftar, seharusnya bisa digunakan untuk melayani permintaan pada halaman informasi. \\
+			\indent Muncullah gagasan lain mengenai pengelompokkan permintaan berdasarkan konten yang diinginkan oleh pengguna. Pengelompokkan ini didasarkan pada dua halaman sebelumnya, yakni halaman informasi dan halaman daftar. Tujuannya untuk mengatur penggunaan sumber daya yang digunakan. Dua kelompok server terpisah akan melayani masing-masing permintaan yang berbeda. Dengan permintaan satu tipe dalam satu kelompok server, membuat kerja server menjadi lebih terpusat dan mengurangi beban yang besar. \\
+			\indent Berbeda dengan yang terjadi saat ini, sebuah server atau bahkan dalam sebuah kelompok server, harus melayani berbagai bentuk permintaan dari pengguna, sehingga menyebabkan beban kerja server meningkat. Bahkan waktu dalam penyelesaian suatu permintaan tidak dapat diukur dalam satuan waktu yang sama karena berbedanya bentuk permintaan pengguna. \\
+			\indent Sementara itu di dalam kelompok server yang bekerja bergantian melayani permintaan, ada kalanya sebuah server mengalami gangguan dan sama sekali tidak dapat melayani setiap permintaan pengguna. Padahal setiap permintaan yang ada masih diteruskan oleh load balancer pada server tersebut. Tidak adanya mekanisme untuk memindahkan permintaan dari server mati ke server yang masih aktif membuat akses ke sebuah web menjadi tidak maksimal.
+			Oleh karena itu dibangunlah sistem ini. Dengan adanya sistem load balancing menggunakan algoritma berbasis konten yang memisahkan antara halaman informasi dan halaman daftar diharapkan dapat meningkatkan jumlah pengguna suatu halaman web dengan banyaknya bentuk permintaan dari pengguna.
 
             
         \section{Rumusan Masalah}
-	Berikut beberapa hal yang menjadi rumusan masalah dalam tugas akhir ini:
-	\begin{enumerate}
-	\item Bagaimana membagi beban kerja server berdasarkan konten permintaan pengguna ?
-	\item Bagaimana menentukan pengelompokkan server berdasarkan konten permintaan pengguna ?
-	\item Bagaimana meningkatkan jumlah pengakses pada halaman informasi dengan terpisahnya akses antara halaman informasi dan halaman daftar ?
-	\item Bagaimana menjaga pengguna tetap dilayani kelompok server yang tersedia hingga permintaan selesai ?
-	\end{enumerate}
+			Berikut beberapa hal yang menjadi rumusan masalah dalam tugas akhir ini:
+			\begin{enumerate}
+			\item Bagaimana membagi beban kerja server berdasarkan konten permintaan pengguna ?
+			\item Bagaimana menentukan pengelompokkan server berdasarkan konten permintaan pengguna ?
+			\item Bagaimana meningkatkan jumlah pengakses pada halaman informasi dengan terpisahnya akses antara halaman informasi dan halaman daftar ?
+			\item Bagaimana menjaga pengguna tetap dilayani kelompok ser-ver yang tersedia hingga permintaan selesai ?
+			\end{enumerate}
 
         \section{Batasan Masalah}
-	Dari permasalahan yang telah diuraikan di atas, terdapat beberapa batasan masalah pada tugas akhir ini, yaitu:
-	\begin{enumerate}
-	\item Konten permintaan pengguna dilihat dari URL yang diakses.
-	\item Pendefinisian kelompok konten permintaan pengguna dilakukan manual oleh manusia.
-	\item Sistem pembagi beban kerja diimplementasikan untuk aplikasi berbasis web.
-	\item Kelompok server yang bekerja dibedakan dengan besar memori yang digunakan.
-	\end{enumerate}
+			Dari permasalahan yang telah diuraikan di atas, terdapat beberapa batasan masalah pada tugas akhir ini, yaitu:
+			\begin{enumerate}
+			\item Konten permintaan pengguna dilihat dari URL yang diakses.
+			\item Pendefinisian kelompok konten permintaan pengguna dilakukan manual oleh manusia.
+			\item Sistem pembagi beban kerja diimplementasikan untuk aplikasi berbasis web.
+			\item Kelompok server yang bekerja dibedakan dengan besar memori yang digunakan.
+			\end{enumerate}
 
         \section{Tujuan}
-	Tugas akhir dibuat dengan beberapa tujuan. Berikut beberapa tujuan dari pembuatan tugas akhir:
-	\begin{enumerate}
-	\item Mampu mengategorikan permintaan pengguna terhadap suatu web berdasarkan halaman yang diakses pengguna.
-	\item Mampu melayani banyaknya permintaan pengguna dengan mengandalkan pengelompokan komputer.
-	\item Mampu meningkatkan jumlah pengakses yang dilayani dengan berhasil oleh aplikasi dibandingkan dengan akses tanpa pemisahan jenis halaman yang diakses.
-	\end{enumerate}
+			Tugas akhir dibuat dengan beberapa tujuan. Berikut beberapa tujuan dari pembuatan tugas akhir:
+			\begin{enumerate}
+			\item Mampu mengategorikan permintaan pengguna terhadap suatu web berdasarkan halaman yang diakses pengguna.
+			\item Mampu melayani banyaknya permintaan pengguna dengan mengandalkan pengelompokan komputer.
+			\item Mampu meningkatkan jumlah pengakses yang dilayani dengan berhasil oleh aplikasi dibandingkan dengan akses tanpa pemisahan jenis halaman yang diakses.
+			\end{enumerate}
 
         \section{Manfaat}
-	Dengan dibangunnya \emph{load balancer} ini diharapkan jumlah pengakses yang mampu dilayani oleh kelompok server untuk halaman informasi menjadi lebih banyak dibandingkan dengan penggunaan algoritma dan teknologi load balancing yang sudah ada.
+			Dengan dibangunnya \emph{load balancer} ini diharapkan jumlah pengakses yang mampu dilayani oleh kelompok server untuk halaman informasi menjadi lebih banyak dibandingkan dengan penggunaan algoritma dan teknologi \emph{load balancing} yang sudah ada.
 
    \chapter{LANDASAN TEORI}
         \section{Algoritma Berbasis Konten}
-	Munculnya algoritma ini didasarkan pada beberapa jenis permintaan pengguna yang mengakses suatu halaman web. Sebuah server melayani berbagai jenis permintaan akan memberikan waktu balasan yang beragam pula. Hal ini akan meningkatkan beban kerja server. \\
-\indent Dengan adanya pemisahan permintaan pengguna berdasarkan konten, kelompok server akan melayani setiap permintaan yang memang ditujukan untuknya server tersebut. Bentuk permintaan akan selalu sama sehingga waktu untuk melayani permintaan menjadi sama dan lebih terkontrol. Beban kerja server akan lebih ringan dengan adanya pembagian beban berdasarkan algoritma ini. [1]
+			Munculnya algoritma ini didasarkan pada beberapa jenis permintaan pengguna yang mengakses suatu halaman web. Sebuah server melayani berbagai jenis permintaan akan memberikan waktu balasan yang beragam pula. Hal ini akan meningkatkan beban kerja server. \\
+			\indent Dengan adanya pemisahan permintaan pengguna berdasarkan konten, kelompok server akan melayani setiap permintaan yang memang ditujukan untuknya server tersebut. Bentuk permintaan akan selalu sama sehingga waktu untuk melayani permintaan menjadi sama dan lebih terkontrol. Beban kerja server akan lebih ringan dengan adanya pembagian beban berdasarkan algoritma ini. [1]
 
         \section{Node JS}
-	Merupakan sebuah platform yang dibangun di atas Chrome's JavaScript runtime dengan teknologi V8 yang mendukung proses server yang bersifat long-running. Tidak seperti platform modern yang mengandalkan multithreading, NodeJS memilih menggunakan asynchronous I/O eventing. Karena inilah NodeJS mampu bekerja dengan konsumsi memori rendah. [2] [3]
+			Merupakan sebuah platform yang dibangun di atas Chrome's JavaScript runtime dengan teknologi V8 yang mendukung proses server yang bersifat long-running. Tidak seperti platform modern yang mengandalkan multithreading, NodeJS memilih menggunakan asynchronous I/O eventing. Karena inilah NodeJS mampu bekerja dengan konsumsi memori rendah. [2] [3]
+			
+			Teknologi yang tidak memanfaatkan multi-thread ini memudahkan pengembang yang terkadang kesulitan mengatur sumberdaya yang digunakan thread. Karena tidak mungkin ada sumberdaya yang terkunci karena thread yang berjalan. Akhirnya banyak yang memanfaatkan kemampuan dasar NodeJS sebagai web server.
+			
+			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+				\centering
+				\includegraphics[width=\linewidth]{contoh_img/contoh_nodejs}
+				\caption{Contoh Penggunaan NodeJS sebagai Web Server}
+				\label{contohNodeJS}
+			\end{figure}
+			
+			
+			Dengan adanya callback untuk setiap penggunaan fungsi, memungkinkan setiap pemanggilan fungsi yang tidak menghasilkan apapun, NodeJS akan \textit{sleep}
 
         \section{Angular JS}
-	Angular JS membantu dalam pembangunan halaman HTML menjadi lebih dinamis. Merupakan sebuah kumpulan alat bantu yang mampu bekerja baik dengan pustaka lainnya. Setiap fitur dapat dimodifikasi sesuai dengan kebutuhan aplikasi. Menjadi salah satu kerangka kerja yang memfasilitasi pembangunan aplikasi kompleks yang terorganisir dan mudah dirawat. Angular JS lebih dikenal pada kemampuannya melayani sebuah situs web yang menggunakan halaman tunggal untuk penyajian data yang beragam. [4][5]
+			Angular JS membantu dalam pembangunan halaman HTML menjadi lebih dinamis. Merupakan sebuah kumpulan alat bantu yang mampu bekerja baik dengan pustaka lainnya. Setiap fitur dapat dimodifikasi sesuai dengan kebutuhan aplikasi. Menjadi salah satu kerangka kerja yang memfasilitasi pembangunan aplikasi kompleks yang terorganisir dan mudah dirawat. Angular JS lebih dikenal pada kemampuannya melayani sebuah situs web yang menggunakan halaman tunggal untuk penyajian data yang beragam. [4][5]
+			
+			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+				\centering
+				\includegraphics[width=\linewidth]{contoh_img/contoh_angular}
+				\caption{Contoh Penggunaan Angular JS pada Halaman Sederhana}
+				\label{contohAngularJS}
+			\end{figure}
+
+			Dengan menggunakan berkas JavaScript Angular yang didapatkan dari CDN (\textit{Content Delivery Network}) atau media lain, pengembang dapat dengan mudah menggunakan fitur yang ditawarkan Angular JS.
+			
+		\section{MongoDB}
+			Merupakan salah satu NoSQL (Not only SQL) terkenal yang dirancang untuk mengelola polimorfik, obyek, dan struktur data yang terus berkembang. MongoDB adalah basis data open-source yang memungkinan mengubah skema dengan cepat sementara fungsi yang diharapkan dari basis data tradisional masih berjalan. [6] [7]
+			
+			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+				\centering
+				\includegraphics[width=\linewidth]{contoh_img/contoh_mongodb}
+				\caption{Contoh Bentuk Penyimpanan Data MongoDB}
+				\label{contohMongoDB}
+			\end{figure}
+			
+			Model penyimpanan yang menyerupai JSON membuat pengguna dapat dengan mudah mengakses dan mengubah data yang ada. Karena penyimpanannya yang menyerupai JSON, membuat struktur penyimpanan dapat berubah sewaktu-waktu tanpa mengubah konfigurasi sebelumnya.
+		
+		\section{Apache JMeter}
+			Menjadi salah satu alat bantu untuk melakukan tes muat dan mengukur performa aplikasi, salah satunya berbasis web. Mampu melakukan pengujian pada berbagai protokol diantaranya Web, FTP, basis data, Mail (SMTP, POP3, IMAP), serta MongoDB. [8]
+			
+			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+				\centering
+				\includegraphics[width=\linewidth]{contoh_img/contoh_mongodb}
+				\caption{Contoh Bentuk Penyimpanan Data MongoDB}
+				\label{contohMongoDB}
+			\end{figure}
+			
+			Apache JMeter berbasis Java. Cara kerjanya yang menyerupai sebuah browser, karena desain awal memang ditujukan untuk menguji aplikasi berbasis web, mampu mengakses halaman website yang memiliki sumber daya statis maupun dinamis. Namun ada beberapa fitur browser yang tidak ditiru oleh Apache JMeter.
 
 
-
-
-
-    \chapter{PEMBAHASAN}
-        \section{Instalasi \LaTeX{}}
-        \LaTeX{} merupakan paket perangkat lunak \emph{cross-platform} yang dapat dipasang di tiga sistem operasi yang umum digunakan saat ini: Windows, Mac OS dan Linux. Karena \LaTeX{} terdiri dari berbagai banyak komponen yang terkait satu sama lain, maka pemasangannya pada komputer umumnya melalui apa yang disebut dengan distribusi \TeX{}. Salah satu distribusi yang umum digunakan adalah paket distribusi \TeX{} Live yang berisikan paket \TeX, \LaTeX, Xe\TeX dengan berbagai paket dan templat pendukung. Selain itu, di Windows terdapat paket bernama Mik\TeX yang memiliki fitur pemasangan paket otomatis dari Internet jika paket yang dibutuhkan belum terpasang.
-
-        Untuk penulisan dokumen \LaTeX sendiri, Anda bisa menggunakan berbagai jenis editor mulai dari teks editor sederhana seperti Notepada hingga editor yang rumit dan menyertakan fitur WYSIWYG (What You See Is What You Get) untuk melihat secara waktu-nyata hasil dokumen \LaTeX{} layaknya menggunakan perangkat lunak pemrosesan kata modern. Penulis sendiri menyarankan Anda untuk belajar dari teks editor sederhana dan membiasakan diri dengan sintaks penulisannya agar tidak tergantung pada kakas penyunting teks tertentu.
-
-        Sub-bab ini membahas mengenai cara pemasangan distribusi \TeX{} pada tiga sistem operasi. 
+    \chapter{DESAIN DAN PERANCANGAN}
+	    Pada bab ini dibahas mengenai analisis dan perancangan sistem.
+	    
+	    \section{Deskripsi Umum Sistem}
+		    Sistem load balancing yang akan dibangun menggunakan teknologi Node JS dengan JavaScript sebagai bahasa pemrograman. Sistem ini akan berjalan pada port 80 dan menjadi target utama ketika pengguna akan menggunakan aplikasi berbasis web yang dikembangkan dengan menggunakan load balancer ini. Akan terdapat beberapa komputer pembantu, selanjutnya disebut \textit{worker}, yang menerima perintah untuk melayani permintaan halaman website dari load balancer. \textit{Worker} akan digolongkan menjadi dua cluster untuk melayani permintaan sesuai dengan URL yang diakses pengguna. Di sinilah algoritma berbasis konten diterapkan.
+		    
+		    Load balancer memiliki daftar worker dan URL yang akan digunakan dalam operasional load balancing. Untuk memudahkan administrator sistem dalam mengkonfigurasikan worker dan menambahkan daftar URL yang ada, disediakan sebuah halaman admin yang berjalan pada port 3000. Selain dengan halaman admin ini, administrator sistem sudah dibantu untuk mengeluarkan worker yang tidak aktif dari pekerjaannya dalam proses load balancing oleh sistem secara otomatis dalam rentang waktu tertentu.
+		    
+		\section{Deskripsi Umum Kebutuhan}
+			Tugas Akhir ini membangun sebuah sistem load balancing dengan halaman web sebagai media untuk mengatur cluster yang bekerja dan URL yang digunakan di dalam aplikasi. Diperlukan rancangan-rancangan kebutuhan fungsional dan non-fungsional, yang akan dijelaskan dalam bentuk diagram kasus penggunaan, diagram aktivitas, dan penjelasan secara rinci tentang kebutuhan fungsional dan non-fungsional.
+			
+			\subsection{Deskripsi Kebutuhan Fungsional}
+				Kebutuhan fungsional merupakan gambaran dari informasi yang terjadi pada sistem yang akan dibangun. Sistem ini digunakan untuk membagi beban kerja pada aplikasi berbasis web. Dan terdapat sebuah halaman admin untuk memudahkan administrator sistem dalam mengaturkan sumber daya yang ada.
+				
+				\begin{ltabulary}{|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+					
+					% Kepala tabel, berulang di setiap halaman
+					\caption{Daftar Kasus Penggunaan Sistem} \label{tabelStrukturDokumen} \\
+					\hline
+					\textbf{No} & \textbf{Nama} & \textbf{text} \\ \hline
+					
+					\endhead
+					\endfoot
+					\endlastfoot
+					
+					% Isi Tabel
+					\textbf{\textbackslash{}part\{Judul Bagian\}} & \texttt{book} \\ \hline
+					\textbf{\textbackslash{}chapter\{Judul Bab\}} & \texttt{book} dan \texttt{report} \\ \hline
+					\textbf{\textbackslash{}section\{Judul Subbab\}} & semua kecuali \texttt{letter} \\ \hline
+					\textbf{\textbackslash{}subsection\{Judul Subsubbab\}} & semua kecuali \texttt{letter} \\ \hline
+					\textbf{\textbackslash{}subsubsection\{Judul Subsubsubbab\}} & semua kecuali \texttt{letter} \\ \hline
+					\textbf{\textbackslash{}paragraph\{Judul Paragraf\}} & semua\\ \hline
+					
+				\end{ltabulary}
+        \section{Kasus Penggunaan}
+	         \begin{ltabulary}{|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+	         	
+	         	% Kepala tabel, berulang di setiap halaman
+	         	\caption{Daftar Kasus Penggunaan Sistem} \label{tabelStrukturDokumen} \\
+	         	\hline
+	         	\textbf{No} & \textbf{Nama} & \textbf{text} \\ \hline
+	         	
+	         	\endhead
+	         	\endfoot
+	         	\endlastfoot
+	         	
+	         	% Isi Tabel
+	         	\textbf{\textbackslash{}part\{Judul Bagian\}} & \texttt{book} \\ \hline
+	         	\textbf{\textbackslash{}chapter\{Judul Bab\}} & \texttt{book} dan \texttt{report} \\ \hline
+	         	\textbf{\textbackslash{}section\{Judul Subbab\}} & semua kecuali \texttt{letter} \\ \hline
+	         	\textbf{\textbackslash{}subsection\{Judul Subsubbab\}} & semua kecuali \texttt{letter} \\ \hline
+	         	\textbf{\textbackslash{}subsubsection\{Judul Subsubsubbab\}} & semua kecuali \texttt{letter} \\ \hline
+	         	\textbf{\textbackslash{}paragraph\{Judul Paragraf\}} & semua\\ \hline
+	         	
+	         \end{ltabulary}
 
         \subsection{Windows}
         Cara mudah untuk memasang distribusi \LaTeX di Windows adalah dengan menggunakan paket Mik\TeX{}. Anda dapat mengunduh kakas pemasang (\emph{installer}) Mik\TeX{} melalui pranala \url{http://miktex.org/download}.  Pemasang berukuran sekitar 200 MB dan terdiri dari beberapa paket dasar saja (dengan sebuah kakas editor bantu bernama \TeX{}works). Jika dokumen ingin dikompilasi menggunakan paket yang belum terpasang, Mik\TeX akan secara otomatis menguduhnya dari Internet sehingga Anda tidak perlu khawatir untuk memasang paket secara manual.
