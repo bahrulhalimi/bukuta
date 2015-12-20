@@ -153,11 +153,48 @@
     \chapter{DESAIN DAN PERANCANGAN}
 	    Pada bab ini dibahas mengenai analisis dan perancangan sistem.
 	    
-	    \section{Deskripsi Umum Sistem}
-		    Sistem load balancing yang akan dibangun menggunakan teknologi Node JS dengan JavaScript sebagai bahasa pemrograman. Sistem ini akan berjalan pada port 80 dan menjadi target utama ketika pengguna akan menggunakan aplikasi berbasis web yang dikembangkan dengan menggunakan load balancer ini. Akan terdapat beberapa komputer pembantu, selanjutnya disebut \textit{worker}, yang menerima perintah untuk melayani permintaan halaman website dari load balancer. \textit{Worker} akan digolongkan menjadi dua cluster untuk melayani permintaan sesuai dengan URL yang diakses pengguna. Di sinilah algoritma berbasis konten diterapkan.
+	    \section{Kasus Penggunaan}
+		    Terdapat dua aktor dengan masing-masing tiga aktivitas dalam sistem yang digambarkan pada Gambar \ref{gambarDiagramKasusPenggunaan}.
 		    
-		    Load balancer memiliki daftar worker dan URL yang akan digunakan dalam operasional load balancing. Untuk memudahkan administrator sistem dalam mengkonfigurasikan worker dan menambahkan daftar URL yang ada, disediakan sebuah halaman admin yang berjalan pada port 3000. Selain dengan halaman admin ini, administrator sistem sudah dibantu untuk mengeluarkan worker yang tidak aktif dari pekerjaannya dalam proses load balancing oleh sistem secara otomatis dalam rentang waktu tertentu.
+		    \begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+		    	\centering
+		    	\includegraphics[width=\linewidth]{contoh_img/usecase}
+		    	\caption{Digram Kasus Penggunaan}
+		    	\label{gambarDiagramKasusPenggunaan}
+		    \end{figure}
 		    
+		    Digram kasus penggunaan pada Gambar \ref{gambarDiagramKasusPenggunaan} dideskripsikan masing-masing pada Tabel \ref{tabelKodeKasusPenggunaan}.
+		    \begin{ltabulary}{|L|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+		    	
+		    	% Kepala tabel, berulang di setiap halaman
+		    	\caption{Daftar Kode Kasus Penggunaan} \label{tabelKodeKasusPenggunaan} \\
+		    	\hline
+		    	\textbf{Kode Kasus Penggunaan} & \textbf{Nama Kasus Penggunaan} & \textbf{Keterangan} \\ \hline
+		    	
+		    	\endhead
+		    	\endfoot
+		    	\endlastfoot
+		    	
+		    	% Isi Tabel
+		    	UC-0001 & Melayani permintaan halaman web & Setiap permintaan halaman web akan mengarah ke sistem dan \textit{balancer} akan melayani dengan cara meneruskan permintaan ke \textit{worker} dan mengeruskan balasan ke pengguna \\ \hline
+		    	UC-0002 & Membagi beban kerja berdasarkan URL yang diakses pengguna & Dibelakang sistem terdapat beberapa \textit{worker} yang bekerja melayani permintaan terusan dari sistem, di sini lah \textit{balancer} membagi beban kerja tersebut \\ \hline
+		    	UC-0003 & Mengeluarkan \textit{worker} dari \textit{cluster} ketika tidak dapat melayani & Jika terdapat \textit{worker} yang tidak dapat melayani permintaan, \textit{balancer} akan mengeluarkan sementara dari tugas melayani hingga \textit{worker} mampu memberikan layanan \\ \hline
+		    	UC-0004 & Mengelola \textit{worker} di dalam \textit{cluster} & Admin dapat menambahkan dan mengurangi \textit{worker} di dalam daftar \textit{cluster} \\ \hline
+		    	UC-0005 & Mengelola URL yang diakses pengguna & Admin dapat menambahkan dan mengurangi daftar URL ke dalam sistem \\ \hline
+		    	UC-0006 & Mengaktifkan dan mematikan sistem & Admin memiliki kendali atas aktif dan tidaknya sistem \\ \hline
+		    	
+		    \end{ltabulary}
+		    
+		\section{Arsitektur Sistem}
+			Pada sub-bab ini, dibahas mengenai tahap analisis dan kebutuhan bisnis dan desain dari sistem yang akan dibangun.
+	    
+		    \subsection{Desain Umum Sistem}
+			    Sistem load balancing yang akan dibangun menggunakan teknologi Node JS dengan JavaScript sebagai bahasa pemrograman. Sistem ini akan berjalan pada port 80 dan menjadi target utama ketika pengguna akan menggunakan aplikasi berbasis web yang dikembangkan dengan menggunakan load balancer ini. Akan terdapat beberapa komputer pembantu, selanjutnya disebut \textit{worker}, yang menerima perintah untuk melayani permintaan halaman website dari load balancer. \textit{Worker} akan digolongkan menjadi dua cluster untuk melayani permintaan sesuai dengan URL yang diakses pengguna. Di sinilah algoritma berbasis konten diterapkan.
+			    
+			    Load balancer memiliki daftar worker dan URL yang akan digunakan dalam operasional load balancing. Untuk memudahkan administrator sistem dalam mengkonfigurasikan worker dan menambahkan daftar URL yang ada, disediakan sebuah halaman admin yang berjalan pada port 3000. Selain dengan halaman admin ini, administrator sistem sudah dibantu untuk mengeluarkan worker yang tidak aktif dari pekerjaannya dalam proses load balancing oleh sistem secara otomatis dalam rentang waktu tertentu.
+			
+			\subsection{Desain Rinci Balancer}
+			    \textit{Balancer} berperan penting dalam sistem. Setiap permintaan yang masuk ke dalam sistem akan diolah oleh balancer dan dikembalikan ke pengguna setelah mendapat balasan dari \textit{worker}. Dalam beb
 		\section{Deskripsi Umum Kebutuhan}
 			Tugas Akhir ini membangun sebuah sistem load balancing dengan halaman web sebagai media untuk mengatur cluster yang bekerja dan URL yang digunakan di dalam aplikasi. Diperlukan rancangan-rancangan kebutuhan fungsional dan non-fungsional, yang akan dijelaskan dalam bentuk diagram kasus penggunaan, diagram aktivitas, dan penjelasan secara rinci tentang kebutuhan fungsional dan non-fungsional.
 			
@@ -167,44 +204,84 @@
 				\begin{ltabulary}{|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
 					
 					% Kepala tabel, berulang di setiap halaman
-					\caption{Daftar Kasus Penggunaan Sistem} \label{tabelStrukturDokumen} \\
+					\captionsetup{justification=centering}
+					\caption{Kebutuhan Fungsional} \label{tabelKebutuhanFungsional} \\
 					\hline
-					\textbf{No} & \textbf{Nama} & \textbf{text} \\ \hline
+					\textbf{Kode Kebutuhan Fungsional} & \textbf{Kebutuhan Fungsional} \\ \hline
 					
 					\endhead
 					\endfoot
 					\endlastfoot
 					
 					% Isi Tabel
-					\textbf{\textbackslash{}part\{Judul Bagian\}} & \texttt{book} \\ \hline
-					\textbf{\textbackslash{}chapter\{Judul Bab\}} & \texttt{book} dan \texttt{report} \\ \hline
-					\textbf{\textbackslash{}section\{Judul Subbab\}} & semua kecuali \texttt{letter} \\ \hline
-					\textbf{\textbackslash{}subsection\{Judul Subsubbab\}} & semua kecuali \texttt{letter} \\ \hline
-					\textbf{\textbackslash{}subsubsection\{Judul Subsubsubbab\}} & semua kecuali \texttt{letter} \\ \hline
-					\textbf{\textbackslash{}paragraph\{Judul Paragraf\}} & semua\\ \hline
+					F-0001 & Melayani permintaan halaman web \\ \hline
+					F-0002 & Membagi beban kerja berdasarkan URL yang diakses pengguna \\ \hline
+					F-0003 & Mengeluarkan \textit{worker} dari \textit{cluster} ketika tidak dapat melayani \\ \hline
+					F-0004 & Mengelola \textit{worker} di dalam \textit{cluster} \\ \hline
+					F-0005 & Mengelola URL yang diakses pengguna \\ \hline
+					F-0006 & Mengaktifkan dan mematikan sistem \\ \hline
 					
 				\end{ltabulary}
-        \section{Kasus Penggunaan}
-	         \begin{ltabulary}{|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
-	         	
-	         	% Kepala tabel, berulang di setiap halaman
-	         	\caption{Daftar Kasus Penggunaan Sistem} \label{tabelStrukturDokumen} \\
-	         	\hline
-	         	\textbf{No} & \textbf{Nama} & \textbf{text} \\ \hline
-	         	
-	         	\endhead
-	         	\endfoot
-	         	\endlastfoot
-	         	
-	         	% Isi Tabel
-	         	\textbf{\textbackslash{}part\{Judul Bagian\}} & \texttt{book} \\ \hline
-	         	\textbf{\textbackslash{}chapter\{Judul Bab\}} & \texttt{book} dan \texttt{report} \\ \hline
-	         	\textbf{\textbackslash{}section\{Judul Subbab\}} & semua kecuali \texttt{letter} \\ \hline
-	         	\textbf{\textbackslash{}subsection\{Judul Subsubbab\}} & semua kecuali \texttt{letter} \\ \hline
-	         	\textbf{\textbackslash{}subsubsection\{Judul Subsubsubbab\}} & semua kecuali \texttt{letter} \\ \hline
-	         	\textbf{\textbackslash{}paragraph\{Judul Paragraf\}} & semua\\ \hline
-	         	
-	         \end{ltabulary}
+				
+			\subsection{Deskripsi Kebutuhan Non-Fungsional}
+				Adapun kebutuhan non-fungsional mendeskripsikan atribut kualitas dari sistem yang dibangun.
+			
+			\subsection{Karakteristik Pengguna}
+				Sistem yang dibangun dalam Tugas Akhir ini hanya memiliki satu aktor utama yaitu administrator sistem, selanjutnya disebut admin. Dalam kenyataannya admin adalah seorang manusia. Aktor lain di luar manusia adalah \textit{load balancer}, selanjutnya disebut \textit{balancer}. Penjelasan tentang aktor dalam sistem dijabarkan pada Tabel \ref{tabelKarasteristikPengguna}.
+				
+				\begin{ltabulary}{|L|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+					
+					% Kepala tabel, berulang di setiap halaman
+					\captionsetup{justification=centering}
+					\caption{Karakteristik Pengguna} \label{tabelKarasteristikPengguna} \\
+					\hline
+					\textbf{Nama Aktor} & \textbf{Tugas} & \textbf{Hak Akses Aplikasi} \\ \hline
+					
+					\endhead
+					\endfoot
+					\endlastfoot
+					
+					% Isi Tabel
+					Admin & Mengelola sistem \textit{load balancer} & Mematikan dan mengaktifkan sistem, mengelola \textit{cluster}, mengelola URL \\ \hline
+					\textit{Balancer} & Menyediakan layanan web & Menyediakan layanan web dan membagi beban kerja \\ \hline
+
+					
+				\end{ltabulary}
+				
+	        \subsection{Digram Kasus Penggunaan}
+		        
+		        Kebutuhan fungsional yang telah dirancang dalam pembahasan sebelumnya dimodelkan dalam bentuk diagram kasus penggunaa. Terdapat dua aktor dengan masing-masing tiga aktivitas dalam sistem yang digambarkan pada Gambar \ref{gambarDiagramKasusPenggunaan}.
+		        
+			    \begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+			    	\centering
+			    	\includegraphics[width=\linewidth]{contoh_img/usecase}
+			    	\caption{Digram Kasus Penggunaan}
+			    	\label{gambarDiagramKasusPenggunaan}
+			    \end{figure}
+			    
+			    Digram kasus penggunaan pada Gambar \ref{gambarDiagramKasusPenggunaan} dideskripsikan masing-masing pada Tabel \ref{tabelKodeKasusPenggunaan}.
+		         \begin{ltabulary}{|L|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+		         	
+		         	% Kepala tabel, berulang di setiap halaman
+		         	\caption{Daftar Kode Kasus Penggunaan} \label{tabelKodeKasusPenggunaan} \\
+		         	\hline
+		         	\textbf{Kode Kasus Penggunaan} & \textbf{Nama Kasus Penggunaan} & \textbf{Keterangan} \\ \hline
+		         	
+		         	\endhead
+		         	\endfoot
+		         	\endlastfoot
+		         	
+		         	% Isi Tabel
+		         	UC-0001 & Melayani permintaan halaman web & Setiap permintaan halaman web akan mengarah ke sistem dan \textit{balancer} akan melayani dengan cara meneruskan permintaan ke \textit{worker} dan mengeruskan balasan ke pengguna \\ \hline
+		         	UC-0002 & Membagi beban kerja berdasarkan URL yang diakses pengguna & Dibelakang sistem terdapat beberapa \textit{worker} yang bekerja melayani permintaan terusan dari sistem, di sini lah \textit{balancer} membagi beban kerja tersebut \\ \hline
+		         	UC-0003 & Mengeluarkan \textit{worker} dari \textit{cluster} ketika tidak dapat melayani & Jika terdapat \textit{worker} yang tidak dapat melayani permintaan, \textit{balancer} akan mengeluarkan sementara dari tugas melayani hingga \textit{worker} mampu memberikan layanan \\ \hline
+		         	UC-0004 & Mengelola \textit{worker} di dalam \textit{cluster} & Admin dapat menambahkan dan mengurangi \textit{worker} di dalam daftar \textit{cluster} \\ \hline
+		         	UC-0005 & Mengelola URL yang diakses pengguna & Admin dapat menambahkan dan mengurangi daftar URL ke dalam sistem \\ \hline
+		         	UC-0006 & Mengaktifkan dan mematikan sistem & Admin memiliki kendali atas aktif dan tidaknya sistem \\ \hline
+		         	
+		         \end{ltabulary}
+		         
+		         
 
         \subsection{Windows}
         Cara mudah untuk memasang distribusi \LaTeX di Windows adalah dengan menggunakan paket Mik\TeX{}. Anda dapat mengunduh kakas pemasang (\emph{installer}) Mik\TeX{} melalui pranala \url{http://miktex.org/download}.  Pemasang berukuran sekitar 200 MB dan terdiri dari beberapa paket dasar saja (dengan sebuah kakas editor bantu bernama \TeX{}works). Jika dokumen ingin dikompilasi menggunakan paket yang belum terpasang, Mik\TeX akan secara otomatis menguduhnya dari Internet sehingga Anda tidak perlu khawatir untuk memasang paket secara manual.

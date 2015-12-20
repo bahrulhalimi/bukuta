@@ -41,7 +41,7 @@
 % from http://tex.stackexchange.com/questions/78075/multi-page-with-tabulary (see there for usage)
 % with modifications taken from the ltxtable package to make captions work
 \makeatletter
-\newcommand*\TY@cap@gobble[2][]{\\}% from ltxtable (adjusted)
+\newcommand*\TY@cap@gobble[3][]{\\}% from ltxtable (adjusted)
 \def\ltabulary{%
     \def\caption{% from ltxtable (adjusted)
         \@ifstar\TY@cap@gobble\TY@cap@gobble}
