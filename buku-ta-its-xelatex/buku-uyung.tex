@@ -2,6 +2,9 @@
 \usepackage{hyperref} % Hyperlink pada dokumen
 \usepackage{listings} % Kode sumber
 
+\renewcommand{\lstlistingname}{Kode Sumber}
+
+
 % \title{Judul Bahasa Indonesia}{Judul Bahasa Inggris}
 \title{Rancang Bangun Sistem Load Balancing Menggunakan Algoritma Berbasis Konten dan Kontrol Ketersediaan Layanan}{Design and Implementasion of Load Balancing System with Content-Based Algorithm and Availability Control}{KI1502} 
 
@@ -189,265 +192,205 @@
 			Pada sub-bab ini, dibahas mengenai tahap analisis dan kebutuhan bisnis dan desain dari sistem yang akan dibangun.
 	    
 		    \subsection{Desain Umum Sistem}
-			    Sistem load balancing yang akan dibangun menggunakan teknologi Node JS dengan JavaScript sebagai bahasa pemrograman. Sistem ini akan berjalan pada port 80 dan menjadi target utama ketika pengguna akan menggunakan aplikasi berbasis web yang dikembangkan dengan menggunakan load balancer ini. Akan terdapat beberapa komputer pembantu, selanjutnya disebut \textit{worker}, yang menerima perintah untuk melayani permintaan halaman website dari load balancer. \textit{Worker} akan digolongkan menjadi dua cluster untuk melayani permintaan sesuai dengan URL yang diakses pengguna. Di sinilah algoritma berbasis konten diterapkan.
+			    Sistem load balancing yang akan dibangun menggunakan teknologi Node JS dengan JavaScript sebagai bahasa pemrograman. Sistem ini akan berjalan pada port 80 dan menjadi target utama ketika pengguna akan menggunakan aplikasi berbasis web yang dikembangkan dengan menggunakan load balancer ini. Akan terdapat beberapa komputer pembantu, selanjutnya disebut \textit{worker}, yang menerima perintah untuk melayani permintaan halaman website dari load balancer. \textit{Worker} akan digolongkan menjadi dua cluster untuk melayani permintaan sesuai dengan URL yang diakses pengguna. Di sinilah algoritma berbasis konten diterapkan. Secara visual, desain sistem secara umum digambarkan pada Gambar \ref{gambarSistem}.
 			    
-			    Load balancer memiliki daftar worker dan URL yang akan digunakan dalam operasional load balancing. Untuk memudahkan administrator sistem dalam mengkonfigurasikan worker dan menambahkan daftar URL yang ada, disediakan sebuah halaman admin yang berjalan pada port 3000. Selain dengan halaman admin ini, administrator sistem sudah dibantu untuk mengeluarkan worker yang tidak aktif dari pekerjaannya dalam proses load balancing oleh sistem secara otomatis dalam rentang waktu tertentu.
-			
-			\subsection{Desain Rinci Balancer}
-			    \textit{Balancer} berperan penting dalam sistem. Setiap permintaan yang masuk ke dalam sistem akan diolah oleh balancer dan dikembalikan ke pengguna setelah mendapat balasan dari \textit{worker}. Dalam beb
-		\section{Deskripsi Umum Kebutuhan}
-			Tugas Akhir ini membangun sebuah sistem load balancing dengan halaman web sebagai media untuk mengatur cluster yang bekerja dan URL yang digunakan di dalam aplikasi. Diperlukan rancangan-rancangan kebutuhan fungsional dan non-fungsional, yang akan dijelaskan dalam bentuk diagram kasus penggunaan, diagram aktivitas, dan penjelasan secara rinci tentang kebutuhan fungsional dan non-fungsional.
-			
-			\subsection{Deskripsi Kebutuhan Fungsional}
-				Kebutuhan fungsional merupakan gambaran dari informasi yang terjadi pada sistem yang akan dibangun. Sistem ini digunakan untuk membagi beban kerja pada aplikasi berbasis web. Dan terdapat sebuah halaman admin untuk memudahkan administrator sistem dalam mengaturkan sumber daya yang ada.
-				
-				\begin{ltabulary}{|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
-					
-					% Kepala tabel, berulang di setiap halaman
-					\captionsetup{justification=centering}
-					\caption{Kebutuhan Fungsional} \label{tabelKebutuhanFungsional} \\
-					\hline
-					\textbf{Kode Kebutuhan Fungsional} & \textbf{Kebutuhan Fungsional} \\ \hline
-					
-					\endhead
-					\endfoot
-					\endlastfoot
-					
-					% Isi Tabel
-					F-0001 & Melayani permintaan halaman web \\ \hline
-					F-0002 & Membagi beban kerja berdasarkan URL yang diakses pengguna \\ \hline
-					F-0003 & Mengeluarkan \textit{worker} dari \textit{cluster} ketika tidak dapat melayani \\ \hline
-					F-0004 & Mengelola \textit{worker} di dalam \textit{cluster} \\ \hline
-					F-0005 & Mengelola URL yang diakses pengguna \\ \hline
-					F-0006 & Mengaktifkan dan mematikan sistem \\ \hline
-					
-				\end{ltabulary}
-				
-			\subsection{Deskripsi Kebutuhan Non-Fungsional}
-				Adapun kebutuhan non-fungsional mendeskripsikan atribut kualitas dari sistem yang dibangun.
-			
-			\subsection{Karakteristik Pengguna}
-				Sistem yang dibangun dalam Tugas Akhir ini hanya memiliki satu aktor utama yaitu administrator sistem, selanjutnya disebut admin. Dalam kenyataannya admin adalah seorang manusia. Aktor lain di luar manusia adalah \textit{load balancer}, selanjutnya disebut \textit{balancer}. Penjelasan tentang aktor dalam sistem dijabarkan pada Tabel \ref{tabelKarasteristikPengguna}.
-				
-				\begin{ltabulary}{|L|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
-					
-					% Kepala tabel, berulang di setiap halaman
-					\captionsetup{justification=centering}
-					\caption{Karakteristik Pengguna} \label{tabelKarasteristikPengguna} \\
-					\hline
-					\textbf{Nama Aktor} & \textbf{Tugas} & \textbf{Hak Akses Aplikasi} \\ \hline
-					
-					\endhead
-					\endfoot
-					\endlastfoot
-					
-					% Isi Tabel
-					Admin & Mengelola sistem \textit{load balancer} & Mematikan dan mengaktifkan sistem, mengelola \textit{cluster}, mengelola URL \\ \hline
-					\textit{Balancer} & Menyediakan layanan web & Menyediakan layanan web dan membagi beban kerja \\ \hline
-
-					
-				\end{ltabulary}
-				
-	        \subsection{Digram Kasus Penggunaan}
-		        
-		        Kebutuhan fungsional yang telah dirancang dalam pembahasan sebelumnya dimodelkan dalam bentuk diagram kasus penggunaa. Terdapat dua aktor dengan masing-masing tiga aktivitas dalam sistem yang digambarkan pada Gambar \ref{gambarDiagramKasusPenggunaan}.
-		        
 			    \begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 			    	\centering
-			    	\includegraphics[width=\linewidth]{contoh_img/usecase}
-			    	\caption{Digram Kasus Penggunaan}
-			    	\label{gambarDiagramKasusPenggunaan}
+			    	\includegraphics[width=\linewidth]{contoh_img/sistem}
+			    	\caption{Desain Sistem Secara Umum}
+			    	\label{gambarSistem}
 			    \end{figure}
 			    
-			    Digram kasus penggunaan pada Gambar \ref{gambarDiagramKasusPenggunaan} dideskripsikan masing-masing pada Tabel \ref{tabelKodeKasusPenggunaan}.
-		         \begin{ltabulary}{|L|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
-		         	
-		         	% Kepala tabel, berulang di setiap halaman
-		         	\caption{Daftar Kode Kasus Penggunaan} \label{tabelKodeKasusPenggunaan} \\
-		         	\hline
-		         	\textbf{Kode Kasus Penggunaan} & \textbf{Nama Kasus Penggunaan} & \textbf{Keterangan} \\ \hline
-		         	
-		         	\endhead
-		         	\endfoot
-		         	\endlastfoot
-		         	
-		         	% Isi Tabel
-		         	UC-0001 & Melayani permintaan halaman web & Setiap permintaan halaman web akan mengarah ke sistem dan \textit{balancer} akan melayani dengan cara meneruskan permintaan ke \textit{worker} dan mengeruskan balasan ke pengguna \\ \hline
-		         	UC-0002 & Membagi beban kerja berdasarkan URL yang diakses pengguna & Dibelakang sistem terdapat beberapa \textit{worker} yang bekerja melayani permintaan terusan dari sistem, di sini lah \textit{balancer} membagi beban kerja tersebut \\ \hline
-		         	UC-0003 & Mengeluarkan \textit{worker} dari \textit{cluster} ketika tidak dapat melayani & Jika terdapat \textit{worker} yang tidak dapat melayani permintaan, \textit{balancer} akan mengeluarkan sementara dari tugas melayani hingga \textit{worker} mampu memberikan layanan \\ \hline
-		         	UC-0004 & Mengelola \textit{worker} di dalam \textit{cluster} & Admin dapat menambahkan dan mengurangi \textit{worker} di dalam daftar \textit{cluster} \\ \hline
-		         	UC-0005 & Mengelola URL yang diakses pengguna & Admin dapat menambahkan dan mengurangi daftar URL ke dalam sistem \\ \hline
-		         	UC-0006 & Mengaktifkan dan mematikan sistem & Admin memiliki kendali atas aktif dan tidaknya sistem \\ \hline
-		         	
-		         \end{ltabulary}
+			    Load balancer memiliki daftar worker dan URL yang akan digunakan dalam operasional load balancing. Untuk memudahkan administrator sistem dalam mengkonfigurasikan worker dan menambahkan daftar URL yang ada, disediakan sebuah halaman admin yang berjalan pada port 3000. Selain dengan halaman admin ini, administrator sistem sudah dibantu untuk mengeluarkan worker yang tidak aktif dari pekerjaannya dalam proses load balancing oleh sistem secara otomatis dalam rentang waktu tertentu.
+			    
+			    
+			    
+			
+			\subsection{Desain Rinci Balancer}
+			    \textit{Balancer} berperan penting dalam sistem. Setiap permintaan yang masuk ke dalam sistem akan diolah oleh balancer dan dikembalikan ke pengguna setelah mendapat balasan dari \textit{worker}. Ada beberapa aplikasi yang sudah menyediakan fitur \textit{balancing}, namun dalam Tugas Akhir ini digunakan NodeJS dan MongoDB untuk membangun fitur \textit{balancing}. Diagram arsitektur Balancer tertera pada Gambar \ref{gambarArsitekturBalancer} dan diagram proses pengguna mengakses halaman web tertera pada Gambar \ref{gambarKerjaBalancer}. 
+			    
+			    \begin{figure}[] % h = pasti berada di bawah teks yang ada di atas
+			    	\centering
+			    	\includegraphics[width=\linewidth]{contoh_img/kompbalancer}
+			    	\caption{Desain Arsitektur Balancer}
+			    	\label{gambarArsitekturBalancer}
+			    \end{figure}
+			    
+			    NodeJS akan menyediakan servis web yang akan menangkap setiap permintaan pengguna. Sebelum diteruskan ke \textit{worker}, \textit{balancer} akan membaca data tentang \textit{cluster} di dalam MongoDB. Data di dalam database berupa \textit{worker} yang siap melayani permintaan berdasarkan URL yang ada. Setelah \textit{balancer} mendapatkan satu \textit{worker} yang siap, permintaan diteruskan untuk mendapatkan balasan yang sesuai. Setelah mendapatkan balasan dari worker, balasan dikembalisan ke pengguna.
+			    
+			    Setiap aktivitas yang terjadi di \textit{balancer} akan dicatat dan disimpan pada MongoDB. Semua data yang dibutuhkan \textit{balancer} tersimpan pada MongoDB dan disajikan pada halaman admin.
+			    			    
+			    \begin{figure}[] % h = pasti berada di bawah teks yang ada di atas
+			    	\centering
+			    	\includegraphics[width=\linewidth]{contoh_img/kerjabalancer}
+			    	\caption{Diagram Interaksi antara Pengguna, Balancer dan Worker}
+			    	\label{gambarKerjaBalancer}
+			    \end{figure}
+			
+			\subsection{Deskripsi Rinci Worker}
+				Worker bekerja sebagai pemberi layanan. Menunggu permintaan yang diteruskan dari balancer dan mengembalikan lagi ke balancer. Aplikasi berbasis web yang akan diakses pengguna dijalankan pada worker. Diagram arsitektur worker tertera pada Gambar \ref{gambarArsitekturWorker}
+				
+				\begin{figure}[] % h = pasti berada di bawah teks yang ada di atas
+					\centering
+					\includegraphics[width=\linewidth]{contoh_img/kompworker}
+					\caption{Diagram Arsitektur Worker}
+					\label{gambarArsitekturWorker}
+				\end{figure}
+				
+				Di dalam sistem yang dibangun, peran \textit{worker} sudah digambarkan pada diagram proses yang tertera pada Gambar \ref{gambarKerjaBalancer}. Pengguna tidak dapat mengakses \textit{worker} secara langsung. Semua akses harus melalui \textit{balancer}. Walaupun sebenarnya semua aplikasi berada pada \textit{worker}.
+			
+			\subsection{Deskripsi Rinci Halaman Admin}
+				Halaman ini hanya akan diakses oleh administrator sistem. Adanya halaman ini ditujukan untuk memudahkan admin dalam mengelola cluster dan mengelola URL yang tersimpan di dalam basis data. Digram arsitektur halaman admin tertera pada Gambar \ref{gambarArsitekturWeb}.
+				
+				\begin{figure}[] % h = pasti berada di bawah teks yang ada di atas
+					\centering
+					\includegraphics[width=\linewidth]{contoh_img/kompweb}
+					\caption{Diagram Arsitektur Halaman Admin}
+					\label{gambarArsitekturWeb}
+				\end{figure}
+				
+				Express JS berperan dalam menangkap setiap rute yang diminta admin. Sementara Angular JS digunakan untuk menampilkan data sesuai dengan rute yang diminta admin. MongoDB yang digunakan dalam halaman admin sama dengan MongoDB yang digunakan oleh \textit{balancer}. Daftar rute yang dapat diakses admin tertera pada Tabel \ref{tabelRuteHalamanAdmin}.
+				
+				\begin{longtable}{|p{0.05\textwidth}|p{0.15\textwidth}|p{0.2\textwidth}|p{0.4\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+					
+					% Kepala tabel, berulang di setiap halaman
+					\caption{Rute pada Halaman Admin} \label{tabelRuteHalamanAdmin} \\
+					\hline
+					\textbf{No} & \textbf{Rute} & \textbf{Metode} & \textbf{Aksi} \\ \hline
+					
+					\endhead
+					\endfoot
+					\endlastfoot
+					
+					% Isi Tabel
+					1 & / & GET, POST & Menampilkan status balancer dan operasi mengaktifkan/mematikan \textit{balancer}\\ \hline
+					2 & /cluster & GET, POST & Mengelola \textit{worker} di dalam \textit{cluster} \\ \hline
+					3 & /path & GET, POST & Mengelola rute pada aplikasi sesuai dengan \textit{cluster} \\ \hline
+
+				\end{longtable}
+				
+			\subsection{Deskripsi Server Basis Data}
+				Dalam menjalankan sebuah aplikasi yang menuntut kemampuan akses hingga banyak pengguna, banyak pengembang yang memisahkan antara server aplikasi dan server basis data. Aplikasi yang berjalan dalam server ini hanya MySQL sebagai basis data seperti yang tertera pada \ref{gambarArsitekturDB}.
+			    
+				\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+					\centering
+					\includegraphics[width=\linewidth]{contoh_img/kompdb}
+					\caption{Diagram Arsitektur Server Basis Data}
+					\label{gambarArsitekturDB}
+				\end{figure}
+
+
+% vAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4 BAB 4
 		         
 		         
-
-        \subsection{Windows}
-        Cara mudah untuk memasang distribusi \LaTeX di Windows adalah dengan menggunakan paket Mik\TeX{}. Anda dapat mengunduh kakas pemasang (\emph{installer}) Mik\TeX{} melalui pranala \url{http://miktex.org/download}.  Pemasang berukuran sekitar 200 MB dan terdiri dari beberapa paket dasar saja (dengan sebuah kakas editor bantu bernama \TeX{}works). Jika dokumen ingin dikompilasi menggunakan paket yang belum terpasang, Mik\TeX akan secara otomatis menguduhnya dari Internet sehingga Anda tidak perlu khawatir untuk memasang paket secara manual.
+	\chapter{Implementasi}
+        Bab ini membahas implementasi sistem Load Balancing secara rinci. Pembahasan dilakukan secara rinci untuk setiap komponen yang ada yaitu: Balancer, Worker, Halaman Admin, dan Server Basis Data.
         
-        
-        Selain pemasang pada pranala di atas, Mik\TeX juga menyediakan paket lengkap berupa DVD yang berisi semua paket LaTeX yang terdaftar di CTAN. Namun sayangnya, DVD tersebut tidak tersedia melalui pengunduhan secara bebas. Anda dapat menghubungi penulis jika berminat mendapatkan DVD ini.
-        
-        
-        \subsection{Linux}
-        
-        Sistem operasi Linux umumnya menyediakan cara yang mudah untuk memasang paket \TeX{} Live. Jika Anda menggunakan Ubuntu, Anda dapat memasang paket ini secara penuh melalui perintah \texttt{sudo apt-get install texlive-full}. Jika Anda hanya memasang paket dasar saja, Anda dapat memasang paket \texttt{texlive} saja (tanpa ada embel-embel apapun).
-        
-        \subsection{Mac OS X}
-        Pengguna Mac OS dapat menggunakan paket Mac\TeX yang tersedia melalui pranala \url{https://tug.org/mactex/}. Paket berukuran 2,4GB ini sudah lebih dari cukup untuk penulisan dokumen La\TeX{} dasar.
-        
-        
-        \section{\texttt{Hello World} menggunakan \LaTeX{}}
-        Pembuatan dokumen La\TeX mungkin sangat rumit bagi pemula karena membutuhkan penggunaan antarmuka teks (Command Line Interface) pada sistem operasi untuk memanggil \emph{compiler}. Jika Anda tidak ingin bersusah payah dalam hal ini, Anda dapat langsung menggunakan editor yang memang sudah terdedikasi untuk pembuatan dokumen \TeX{}. Editor yang saya sarankan dalam hal ini adalah \TeX{}studio yang tersedia untuk tiga sistem operasi (Unduh melalui \url{http://texstudio.sourceforge.net/}). Tangkapan layar dari aplikasi ini dapat dilihat pada Gambar \ref{gambarTexStudio}.
-        
-        \begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
-			\centering
-			\includegraphics[width=\linewidth]{contoh_img/texstudio}
-			\caption{Tangkapan Layar \TeX{}studio}
-			\label{gambarTexStudio}
-		\end{figure}
-
-        Jika sudah siap, silahkan membuka teks editor favorit Anda dan mulai menulis beberapa bagian teks seperti pada Gambar \ref{kodeHelloWorld}. Anda boleh menggunakan atau tidak indentasi pada setiap elemen. Penggunaan indentasi dalam hal ini bermaksud untuk memudahkan pembacaan struktur dokumen. Simpan berkas tersebut ke dalam berkas bernama "hello\_world.tex".
-        
-        \begin{figure}[h]
-	        \lstinputlisting[language=TeX]{contoh_src/hello_world.tex}
-	        \caption{Artikel Hello World}
-	        \label{kodeHelloWorld}
-        \end{figure}
-        
-        \subsection{Kompilasi Dokumen}
-        
-        Untuk memroses kode ke dokumen, Anda dapat menggunakan menu \texttt{Tools | Build and View (F1)} pada \TeX{}studio atau memanggil perintah berikut pada antarmuka teks (jika Anda sudah terbiasa dan pastikan berada pada direktori yang tepat) :
-        
-        \texttt{latex hello\_world.tex}
-        
-        Setelah beberapa pesan kompilasi muncul, Anda dapat membuka berkas "hello\_world.dvi" yang merupakan dokumen hasil kompilasi.
-        
-        Jika Anda ingin membuat dokumen dalam format PDF, Anda dapat menggunakan kompilator bernama \texttt{pdflatex}. Hasilnya dapat dilihat pada Gambar \ref{gambarHelloWorldPDF} Kompilator bawaan dapat Anda ubah dalam \TeX{}studio melalui menu \texttt{Options | Configure TeX Studio | Build | Default Compiler}. Untuk lebih jelasnya, distribusi \TeX atau \LaTeX umumnya memiliki kompilator sebagai berikut :
-        
-        \begin{itemize}
-	        \item \textbf{\LaTeX} merupakan kompilator bawaan untuk \LaTeX yang merupakan pengembangan dari \TeX{} (dikembangkan oleh Donald Knuth). Fitur utama \LaTeX{} antara lain: pilihan kelas dokumen dan adanya strukturisasi dokumen.
-	        \item \textbf{pdf\LaTeX} merupakan pengembangan dari \LaTeX yang akan menghasilkan luaran dalam bentuk PDF ketimbang DVI.
-	        \item \textbf{Xe\LaTeX} merupakan pengembangan dari \LaTeX dengan dukungan fonta berbasis TrueType. Templat Buku TA ini menggunakan Xe\LaTeX agar dapat menggunakan fonta \textbf{Times New Roman} bawaan dari Windows.
-        \end{itemize} 
-         
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width=\linewidth]{contoh_img/hello_world.pdf.png}
-			\caption{hello\_world.pdf}
-			\label{gambarHelloWorldPDF}
-		\end{figure}
+        \section{Lingkungan Implementasi}
+	        Lingkungan implementasi dan pengembangan dilakukan menggunakan komputer dengan spesifikasi Intel(R) Core(TM) i3-2120 CPU @ 3.30GHz dengan memori 8 GB. Perangkat lunak yang digunakan dalam pengembangan adalah sebagai berikut :
+	        \begin{itemize}
+	        	\item Sistem Operasi Linux Ubuntu Server 14.04.01 LTS
+	        	\item Desktop xfce4
+	        	\item Editor teks vim
+	        	\item Editor teks Sublime Text 2
+	        	\item git versi 1.9.1 untuk pengolahan versi program
+	        	\item NodeJS versi 4.2.3 untuk pengembangan aplikasi
+	        	\item MongoDB versi 3.2.0 untuk basis data
+	        	\item Express versi 4.13.1 untuk web server halaman admin
+	        	\item Angular JS versi 1.5.0-beta.2 untuk pengolahan data pada halaman admin
+	        	\item Nginx dan MySQL yang berjalan di \textit{worker} dan server basis data
+	        	\item Paket \LaTeX untuk pembuatan tugas akhir
+	        	\item Peramban \textit{web} Mozilla Firefox
+	        \end{itemize}
+	        
+		\section{Rincian Implementasi Balancer}
 		
-		\subsection{Struktur Kode \LaTeX}
-		Secara umum, struktur kode berkas .tex dibagi menjadi dua bagian:
-		
-		\begin{itemize}
-			\item \textbf{Preambule}, merupakan bagian yang berada sebelum \texttt{\textbackslash{}begin\{document\}} dilakukan. Pada bagian ini, biasanya diawali dengan deklarasi \texttt{\textbackslash{}documentclass} (dibahas selanjutnya) dan deklarasi impor paket tambahan yang dibutuhkan (melalui \texttt{\textbackslash{}usepackage\{\}}).
-			\item \textbf{Dokumen} merupakan bagian yang diawali dengan \texttt{\textbackslash{}begin\{document\}} dan diakhiri dengan \texttt{\textbackslash{}end\{document\}}. Pada bagian inilah Anda mengisi konten dari dokumen Anda secara berurutan per halamannya.
-		\end{itemize}
-        
-        \subsection{Kelas Dokumen Bawaan}
-        
-        Anda tidak seharusnya memikirkan bagaimana templat dan tata letak dokumen Anda di \LaTeX{} jika Anda memang fokus untuk menulis dokumen. Filosofi di \LaTeX{} menegaskan bahwa Anda memang harus fokus terhadap isi konten daripada terdistraksi dengan bagaimana wujud dokumen ketika dicetak. Untuk tujuan ini, \LaTeX{} beserta para komunitas menyediakan banyak templat untuk banyak keperluan yang bisa digunakan oleh pengguna sehingga mereka bisa langsung fokus mengisi konten dari dokumen mereka. Jenis templat ini dapat Anda pilih pada bagian \texttt{\textbackslash{}documentclass\{\textbf{nama-templat}\}}.
-        
-        \LaTeX{} sendiri memiliki beberapa templat bawaan :
-        \begin{itemize}
-        	\item \textbf{article}: templat untuk artikel ilmiah.
-        	\item \textbf{book}: templat untuk penulisan buku, terdapat struktur dokumen layaknya buku seperti \texttt{part} dan \texttt{chapter}.
-        	\item \textbf{report}: seperti templat \textbf{book} tapi tidak memiliki pembagian halaman awal, halaman isi dan lampiran.
-        	\item \textbf{letter}: untuk penulisan dokumen tanpa struktur di dalamnya.
-        	
-        \end{itemize}
-        Anda dapat menambahkan beberapa opsi pada templat yang Anda pilih dengan menambahkan argumen opsional (menggunakan kurung siku) pada deklarasi \texttt{\textbackslash{}documentclass}. Misalnya, jika Anda ingin membuat dokumen buku dengan ukuran kertas A5 dengan ukuran fonta 11pt (seperti Buku TA), Anda bisa membuat deklarasi sebagai berikut:
-        
-        \texttt{\textbackslash{}documentclass[a5paper,11pt]\{book\}}
-        
-        Selain templat bawaan \LaTeX, terdapat beberapa templat yang disediakan oleh komunitas:
-        
-        \begin{itemize}
-        	\item \textbf{IEEEtran} merupakan templat untuk menulis jurnal dalam format IEEE. Bisa digunakan juga untuk pengiriman jurnal ilmiah POMITS. (Contoh pada Gambar \ref{gambarIEEEtran})
-        	\item \textbf{beamer} merupakan templat untuk membuat \emph{slide} presentasi. (Contoh pada Gambar \ref{gambarBeamer})
-        	\item \textbf{a0poster} merupakan templat untuk membuat dokumen dengan ukuran kertas yang besar, seperti poster.
-        	\item \textbf{memoir} merupakan sekumpulan templat untuk kebutuhan penulisan buku fiksi maupun non-fiksi.
-        	\item \textbf{moderncv} untuk penulisan Curriculum Vitae.
-        	\item dan masih banyak lagi.
-        \end{itemize}
-        
-        \begin{figure}[h]
-        	\centering
-        	\includegraphics[width=\linewidth]{contoh_img/IEEETran}
-        	\caption{Contoh penggunaan templat IEEETran}
-        	\label{gambarIEEEtran}
-        \end{figure}
-        
-        \begin{figure}[h]
-        	\centering
-        	\includegraphics[width=\linewidth]{contoh_img/beamer}
-        	\caption{Contoh penggunaan templat beamer}
-        	\label{gambarBeamer}
-        \end{figure}
+			\textit{Balancer} dibangun dengan menggunakan Node JS, MongoDB dan beberapa paket yang diinstall secara terpisah. Paket-paket ini diinstall dengan menggunakan npm (\texttt{https://www.npmjs.com/}) yang memang digunakan sebagai \textit{command line} oleh Node JS. Pada sub bab ini akan dijelaskan implementasi mulai dari instalasi Node JS hingga \textit{balancer} siap digunakan.
+			
+			\subsection{Instalasi Node JS}
+				Ada banyak cara untuk menginstall NodeJS ke dalam komputer, salah satunya melalui kode sumber yang dapat diunduh pada halaman \texttt{https://nodejs.org/en/download/}. Setelah diunduh berkas perlu diekstrak untuk melanjutkan instalasi. Di dalam folder hasil ekstraksi, terdapat berkas \texttt{README.md} yang berisi langkah untuk menginstall NodeJS ke komputer. Semua langkah dilakukan melalui \textit{command line} dan langkah installasinya adalah sebagai berikut
+				
+				\begin{itemize}
+					\item Pindah ke folder dimana Node JS di ekstrak dengan perintah \texttt{cd \{\$pathdownload\}/node-v4.2.3/}.
+					\item Di dalam folder jalankan perintah berikut secara berurutan \texttt{./configure}, \texttt{make}, \texttt{make install}.
+					\item Jika terdapat pesan \textit{error} mengenai beberapa pustaka yang belum terinstall sebelumnya, jalankan perintah \texttt{sudo apt-get install -f}.
+					\item Semua perintah dilakukan pada hak akses \textit{root}.
+				\end{itemize}
+				
+				Untuk memastikan bahwa Node JS sudah berjalan dan siap digunakan, dijalankan perintah dan dihasilkan output seperti pada Gambar \ref{gambarCekNodeJS}.
+				
+				\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+					\centering
+					\includegraphics[width=\linewidth]{contoh_img/ceknodejs}
+					\caption{Contoh Node JS Siap Digunakan}
+					\label{gambarCekNodeJS}
+				\end{figure}
+			
+			\subsection{Installasi MongoDB}
+				MongoDB menyediakan repositori tersendiri untuk mengunduh MongoDB. Setelah terkoneksi dengan repositori yang dimiliki MongoDB, instalasi dapat berlanjut dengan menggunakan perintah \texttt{apt-get}. Berikut ini langkah-langkah instalasi MongoDB.
+				
+				\begin{itemize}
+					\item Tambahkan \textit{public key} yang digunakan untuk manajemen paket pada sistem operasi dengan perintah \texttt{sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10}.
+					\item Buat file repositori untuk MongoDB pada sistem komputer dengan perintah \texttt{echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list}. Perintah ini disesuaikan dengan distro Linux yang digunakan.
+					\item Perbaharui basis data manajemen paket dengan perintah \texttt{sudo apt-get update}.
+					\item Install MongoDB ke komputer dengan perintah \texttt{sudo apt-get install -y mongodb-org}.
+					\item Setelah instalasi selesai jalankan MongoDB dengan perintah \texttt{sudo service mongod start}.
+					\item MongoDB siap digunakan dengan tampilan pada Gambar
+					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+						\centering
+						\includegraphics[width=\linewidth]{contoh_img/cekmongodb}
+						\caption{Contoh Node JS Siap Digunakan}
+						\label{gambarCekMongoDB}
+					\end{figure}
+					
+				\end{itemize}
+				
+				
+			
+			Npm ini seperti modul yang diunduh untuk kebutuhan sistem, hanya saja beberapa modul bisa diinstall pada sistem operasi dan dapat digunakan pada \textit{command line}. 
+			Untuk mengunduh modul yang dibutuhkan secara bersamaan, digunakan perintah \texttt{npm install}. Perintah ini akan membaca file \texttt{package.json} yang berisi daftar modul yang akan digunakan. Isi \texttt{package.json} untuk Tugas Akhir ini seperti pada Kode Sumber \ref{packageJson}
 
-        
-        \section{Cara Menggunakan Templat \texttt{ta-its}}
-        Berkas \texttt{ta-its.cls} yang disertakan pada templat ini merupakan bagian utama dari templat Buku TA ITS yang siap untuk digunakan. Untuk menggunakan templat ini, salinlah berkas \texttt{ta-its.cls} dan direktori \texttt{img/} (berisi berkas sampul) ke direktori di mana Anda akan menulis Buku TA Anda. Kemudian gunakan templat ini sebagai kelas dokumen melalui deklarasi sebagai berikut pada Preambule :
-        
-        \texttt{\textbackslash{}documentclass\{buku-ta\}}
-        
-        Templat ini tidak menerima argumen tambahan apapun untuk saat ini. Selanjutnya, Anda wajib mendeklarasikan Judul, Pengarang, Dosen dan Jurusan juga pada bagian Preambule. Formatnya adalah sebagai berikut :
-        
-        \begin{itemize}
-        	\item \texttt{\textbackslash{}title\{Judul TA dalam Bahasa Indonesia\}\{Judul TA dalam Bahasa Inggris\}}
-        	\item \texttt{\textbackslash{}author\{Nama Penulis\}\{NRP Penulis\}}
-        	\item \texttt{\textbackslash{}degree\{Nama Gelar\}\{Bidang Studi\}\{Program Studi\}\{Jurusan\}\{Jurusan (English)\}\{Fakultas\}\{Fakultas Singkatan\}\{Fakultas (English)\}}
-        	\item \texttt{\textbackslash{}time\{Bulan Pembuatan\}\{Tahun Pembuatan\}}
-        \end{itemize}
-        
-        Kemudian pada bagian isi, templat ini menawarkan beberapa fungsi untuk pembuatan elemen buku secara otomatis, antara lain :
-        
-        \begin{itemize}
-        	\item \texttt{\textbackslash{}maketitle} digunakan untuk membuat sampul dalam tiga halaman: Sampul Depan, Sampul Tengah, Sampul Tengah Bahasa Inggris.
-        	\item \texttt{\textbackslash{}legalityPaper} untuk membuat halaman pengesahan.
-        	\item Environment \texttt{abstrak} dan \texttt{abstract} untuk penulisan Abstrak dalam Bahasa Indonesia dan Inggris.
-        \end{itemize}
-        
-        Contoh penggunaan dapat Anda lihat pada berkas \texttt{contoh.tex}.
-        
-        Dengan menggunakan templat ini, Anda akan menghemat waktu Anda untuk membuat sampul dan halaman pengesahan yang kadang bisa membuat kerepotan dalam hal pengaturan posisi indentasinya.
-        
-        \section{Struktur Dokumen \LaTeX{}}
-        Dokumen \LaTeX{} terdiri dari struktur yang dibuat berdasarkan struktur dokumen sehari-hari. Sebagai penulis dokumen, Anda wajib menggunakan struktur ini sehingga \LaTeX{} dapat melakukan hal lain yang membantu Anda dalam mengorganisir dokumen seperti misalnya pembuatan Daftar Isi. Berikut adalah struktur dokumen yang ada di \LaTeX{} diurutkan berdasarkan hirarkinya.
-        
-        \begin{ltabulary}{|L|L|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
-        	
-        	% Kepala tabel, berulang di setiap halaman
-        	\caption{Struktur hirarki dokumen \LaTeX{}} \label{tabelStrukturDokumen} \\
-        	\hline
-        	\textbf{Nama} & \textbf{Peruntukkan} \\ \hline
-        	
-        	\endhead
-        	\endfoot
-        	\endlastfoot
-        	
-        	% Isi Tabel
-        	\textbf{\textbackslash{}part\{Judul Bagian\}} & \texttt{book} \\ \hline
-        	\textbf{\textbackslash{}chapter\{Judul Bab\}} & \texttt{book} dan \texttt{report} \\ \hline
-        	\textbf{\textbackslash{}section\{Judul Subbab\}} & semua kecuali \texttt{letter} \\ \hline
-        	\textbf{\textbackslash{}subsection\{Judul Subsubbab\}} & semua kecuali \texttt{letter} \\ \hline
-        	\textbf{\textbackslash{}subsubsection\{Judul Subsubsubbab\}} & semua kecuali \texttt{letter} \\ \hline
-        	\textbf{\textbackslash{}paragraph\{Judul Paragraf\}} & semua\\ \hline
-        	
-        \end{ltabulary}
-        
-        Untuk templat pihak ketiga, Anda dapat melihat dokumentasi dari templat bersangkutan. Sebagai informasi, templat \texttt{ta-its} dibuat berdasarkan templat \texttt{book} sehingga struktur dokumennya sama.
-        
-        \section{Paragraph dan Teks}
-        \section{Daftar}
-        \section{Gambar}
-        \section{Tabel}
-        \section{Rumus Matematika}
-        \section{Algoritma}
-        \section{Kode Sumber}
+			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Isi Package.Json},label=packageJson]
+			\centering
+{
+	"name": "tugasakhir",
+	"version": "1.0.0",
+	"description": "Tugas Akhir ini berisi tentang load balancer dengan node JS",
+	"main": "balancer.js",
+	"dependencies": {
+		"mongoose": "^4.3.1",
+		"http-proxy": "^1.12.0",
+		"net-ping": "^1.1.12",
+		"request": "^2.67.0"
+	},
+	"devDependencies": {},
+	"scripts": {
+	"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bahrulhalimi/tugasakhir.git"
+	},
+	"keywords": [
+		"balancer",
+		"TA",
+		"nodeJS"
+	],
+	"author": "Bahrul Halimi",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/bahrulhalimi/tugasakhir/issues"
+	},
+	"homepage": "https://github.com/bahrulhalimi/tugasakhir#readme"
+}
+				
+			\end{lstlisting}
+			
+			Selain paket yang diinstall melalui perintah \texttt{npm install}, ada beberapa paket yang harus diinstall ke dalam sistem untuk bisa dipanggil melalui \textit{command line}. Beberapa perintah yang harus dijalankan untuk menginstall paket adalah sebagai berikut.
+			
+			\begin{itemize}
+				\item \texttt{sudo npm install forever}
+			\end{itemize}
         
 
 \appendix % Halaman lampiran, dengan judul LAMPIRAN X
