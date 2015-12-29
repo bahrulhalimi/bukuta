@@ -335,37 +335,49 @@
 					\item Perbaharui basis data manajemen paket dengan perintah \texttt{sudo apt-get update}.
 					\item Install MongoDB ke komputer dengan perintah \texttt{sudo apt-get install -y mongodb-org}.
 					\item Setelah instalasi selesai jalankan MongoDB dengan perintah \texttt{sudo service mongod start}.
-					\item MongoDB siap digunakan dengan tampilan pada Gambar
+					\item MongoDB siap digunakan dengan tampilan pada Gambar \ref{gambarCekMongoDB}.
 					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 						\centering
 						\includegraphics[width=\linewidth]{contoh_img/cekmongodb}
-						\caption{Contoh Node JS Siap Digunakan}
+						\caption{Contoh MongoDB dan Daftar Database}
 						\label{gambarCekMongoDB}
 					\end{figure}
 					
 				\end{itemize}
 				
 				
-			
-			Npm ini seperti modul yang diunduh untuk kebutuhan sistem, hanya saja beberapa modul bisa diinstall pada sistem operasi dan dapat digunakan pada \textit{command line}. 
-			Untuk mengunduh modul yang dibutuhkan secara bersamaan, digunakan perintah \texttt{npm install}. Perintah ini akan membaca file \texttt{package.json} yang berisi daftar modul yang akan digunakan. Isi \texttt{package.json} untuk Tugas Akhir ini seperti pada Kode Sumber \ref{packageJson}
+			\subsection{Instalasi Paket}
+			Seperti yang sudah dijelaskan sebelumnya, instalasi paket yang dibutuhkan menggunakan npm. Cara kerja npm ini hanya mengunduh paket untuk kebutuhan sistem, hanya saja beberapa paket bisa diinstall pada sistem operasi dan dapat digunakan pada \textit{command line}. 
+			Untuk mengunduh paket yang dibutuhkan secara bersamaan, digunakan perintah \texttt{npm install}. Perintah ini akan membaca file \texttt{package.json} yang berisi daftar paket yang akan digunakan. Isi \texttt{package.json} untuk Tugas Akhir ini seperti pada Kode Sumber \ref{packageJson}
 
 			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Isi Package.Json},label=packageJson]
-			\centering
 {
 	"name": "tugasakhir",
 	"version": "1.0.0",
 	"description": "Tugas Akhir ini berisi tentang load balancer dengan node JS",
-	"main": "balancer.js",
 	"dependencies": {
-		"mongoose": "^4.3.1",
+		"body-parser": "~1.13.2",
+		"cookie-parser": "~1.3.5",
+		"debug": "~2.2.0",
+		"express": "~4.13.1",
+		"express-session": "^1.7.6",
+		"express-socket.io-session": "^1.3.1",
+		"hbs": "~3.1.0",
+		"helmet": "^0.10.0",
 		"http-proxy": "^1.12.0",
+		"moment": "~2.x.x",
+		"mongoose": "^4.3.1",
+		"morgan": "~1.6.1",
+		"mysql": "~2.x.x",
 		"net-ping": "^1.1.12",
-		"request": "^2.67.0"
+		"node-sass-middleware": "0.8.0",
+		"request": "^2.67.0",
+		"serve-favicon": "~2.3.0",
+		"socket.io": "~1.x.x"
 	},
 	"devDependencies": {},
 	"scripts": {
-	"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": {
 		"type": "git",
@@ -383,15 +395,41 @@
 	},
 	"homepage": "https://github.com/bahrulhalimi/tugasakhir#readme"
 }
+
 				
 			\end{lstlisting}
 			
-			Selain paket yang diinstall melalui perintah \texttt{npm install}, ada beberapa paket yang harus diinstall ke dalam sistem untuk bisa dipanggil melalui \textit{command line}. Beberapa perintah yang harus dijalankan untuk menginstall paket adalah sebagai berikut.
+				Selain paket yang diinstall melalui perintah \texttt{npm install}, ada beberapa paket yang harus di install ke dalam sistem untuk bisa dipanggil melalui \textit{command line}. Salah satu paket yang digunakan dalam Tugas Akhir ini adalah \texttt{forever}. Paket ini harus di install ke komputer, sehingga dapat digunakan melalui \textit{command line}. Untuk menginstallnya digunakan perintah \texttt{sudo npm install forever -g}.
+        
+	        \subsection{Koneksi ke Basis Data}
+		        Pada Tugas Akhir ini digunakan paket yang membantu untuk menghubungkan aplikasi dengan basis data yaitu paket \texttt{mongoose}. Untuk dapat terhubung dengan basis data, digunakan perintah \texttt{mongoose.connect('mongodb://127.0.0.1/tugasakhir')}
+		        
+		        Karena basis data yang digunakan MongoDB dan bersifat NoSQL, maka struktur tabel menjadi tidak wajib di deklarasikan di awal. Untuk selanjutnya dibuat model untuk mendeklarasikan setiap koneksi ke basis data, sesuai dengan tabel yang digunakan. Dalam MongoDB istilah tabel menjadi koleksi (\textit{collection}). Terdapat empat koleksi yang dibuat yaitu:
+		        
+		        \begin{itemize}
+		        	\item aktivitas\_model, digunakan untuk mencatat setiap permintaan ke sistem.
+		        	\item clusterinsert\_model, digunakan untuk mencatat daftar \textit{worker} di dalam \textit{cluster insert}.
+		        	\item clusterview\_model, digunakan untuk mencatat daftar \textit{worker} di dalam \textit{cluster view}.
+		        	\item path\_model, digunakan untuk mencatat daftar URL dan digolongkan ke dalam dua jenis, yaitu insert dan view.
+		        \end{itemize}
+		        
+		        Kode program untuk setiap model tertera pada lampiran.
+			
+			\subsection{Implementasi Balancer}
+				Algoritma berbasis konten diterapkan untuk menjalankan balancer. Algoritma ini hanya akan memilih \textit{worker} sesuai dengan \textit{cluster} yang aktif dan siap melayani permintaan. Daftar \textit{worker} yang dapat digunakan didapatkan dari basis data yang diakses dengan menggunakan model yang sudah di bahas pada sub-bab sebelumnya. Selanjutnya setiap permintaan akan dilempar ke \textit{worker} terpilih dan dilayani hingga permintaan selesai. Kode program untuk implementasi \textit{balancer} tertera pada Kode Program \ref{implemenBalancer}
+				
+				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Implementasi Algoritma Berbasis Konten pada Balancer},label=implemenBalancer]
+blabla
+				\end{lstlisting}
+		
+		\section{Rincian Implementasi Worker}
+			Untuk melayani setiap permintaan dari pengguna, digunakan Nginx sebagai web server dan MySQL sebagai penyimpanan data dengan sistem operasi Ubuntu Server 14.04.03. \textit{Balancer} tidak menjalankan fungsi sebagai web server karena semua permintaan akan dilayani \textit{worker}. Untuk melakukan installasi kedua aplikasi tersebut digunakan perintah sebagai berikut:
 			
 			\begin{itemize}
-				\item \texttt{sudo npm install forever}
+				\item \texttt{sudo apt-get install nginx}. Perintah ini digunakan untuk instalasi Nginx ke dalam sistem operasi. Untuk dapat melayani halaman dinamis seperti PHP, diperlukan tambahan aplikasi lain yaitu php5-fpm. Untuk menginstalnya dijalankan perintah \texttt{sudo apt-get install php5-fpm}. 
+				\item Berhubungan dengan php5-fpm, karena aplikasi yang akan dijalankan menggunakan kerangka kerja CodeIgniter, dibutuhkan paket lain yang dapat diinstall dengan perintah \texttt{sudo apt-get install php5-fpm php5-cgi php5-cli php5-mysql php5-curl php5-gd php5-idn php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-mhash php5-pspell php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl}
 			\end{itemize}
-        
+		        
 
 \appendix % Halaman lampiran, dengan judul LAMPIRAN X
 
