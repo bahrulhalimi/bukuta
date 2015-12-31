@@ -1009,6 +1009,16 @@ key_buffer		= 16M
 						TOTAL & 0,33\% & 15,60\% \\ \hline
 						
 					\end{longtable}
+					
+		\chapter{Penutup}
+			Bab ini membahas kesimpulan yang dapat diambil dari tujuan pembuatan sistem dan hubungannya dengan hasil uji coba dan evaluasi yang telah dilakukan. Selain itu, terdapat beberapa saran yang bisa dijadikan acuan untuk melakukan pengembangan dan penelitian lebih lanjut.
+			
+			\section{Kesimpulan}
+				Dari proses perancangan, implementasi dan pengujian terhadap sistem, dapat diambil beberapa kesimpulan berikut:
+				\begin{enumerate}
+					\item Pembagian beban kerja berdasarkan konten permintaan pengguna dilakukan dengan membaca URL yang diakses pengguna. Proses ini terbilang mudah karena sudah banyak paket atau modul yang dapat digunakan untuk membaca permintaan pengguna yang masuk ke dalam server, salah satunya adalah paket http-proxy yang dimiliki NodeJS. Pembagian beban kerja berdasarkan URL sudah teruji pada uji fungsionalitas.
+					\item Pengelompokkan server atau worker berdasarkan konten permintaan pengguna dapat dilakukan manual oleh administrator sistem. NodeJS berperan sebagai balancer yang membaca pengelompokkan yang sudah dimasukkan oleh administrator. Kinerja \textit{worker} berdasarkan pengelompokkan yang ada sudah teruji 
+				\end{enumerate}
 
 \appendix % Halaman lampiran, dengan judul LAMPIRAN X
 
