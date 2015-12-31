@@ -581,9 +581,124 @@ key_buffer		= 16M
 			
 			Spesifikasi untuk setiap komponen yang digunakan adalah sebagai berikut:
 			\begin{itemize}
-				\item 
+				\item Balancer:
+				\begin{itemize}
+					\item Perangkat Keras:
+					\begin{itemize}
+						\item Processor Intel(R) Core(TM) i3-2120 CPU @ 3.30GHz
+						\item RAM 8192 MB
+						\item Hard disk 130 GB
+					\end{itemize}
+					\item Perangkat Lunak:
+					\begin{itemize}
+						\item Sistem operasi Ubuntu LTS 14.04.03
+						\item Nginx 1.4.6
+						\item Node JS 4.2.3
+						\item MongoDB 3.2.0
+						\item PHP 5.5.9
+						\item OpenSSH
+					\end{itemize}
+				\end{itemize}
+				\item Worker:
+				\begin{itemize}
+					\item Worker 1:
+					\begin{itemize}
+						\item Perangkat Keras:
+						\begin{itemize}
+							\item Processor Intel(R) Core(TM)2 CPU 4400 @
+							2.00GHz
+							\item RAM 2048 GB
+							\item Hard disk 80 GB
+						\end{itemize}
+						\item Perangkat Lunak:
+						\begin{itemize}
+							\item Sistem operasi Ubuntu LTS 14.04.03
+							\item Nginx 1.4.6
+							\item PHP 5.5.9
+							\item OpenSSH
+						\end{itemize}
+					\end{itemize}
+					\item Worker 2:
+					\begin{itemize}
+						\item Perangkat Keras:
+						\begin{itemize}
+							\item Processor Intel(R) Core(TM)2 Duo CPU E7200
+							@ 2.53GHz
+							\item RAM 2048 GB
+							\item Hard disk 250 GB
+						\end{itemize}
+						\item Perangkat Lunak:
+						\begin{itemize}
+							\item Sistem operasi Ubuntu LTS 14.04.03
+							\item Nginx 1.4.6
+							\item PHP 5.5.9
+							\item OpenSSH
+						\end{itemize}
+					\end{itemize}
+					\item Worker 3 dan 4:
+					\begin{itemize}
+						\item Perangkat Keras:
+						\begin{itemize}
+							\item Processor Intel(R) Core(TM) i3-2120 CPU @
+							3.30GHz
+							\item RAM 4096 GB
+							33
+							\item Hard disk 500 GB
+						\end{itemize}
+						\item Perangkat Lunak:
+						\begin{itemize}
+							\item Sistem operasi Ubuntu LTS 14.04.03
+							\item Nginx 1.4.6
+							\item PHP 5.5.9
+							\item OpenSSH
+						\end{itemize}
+					\end{itemize}
+				\end{itemize}
+				\item Server basis data:
+				\begin{itemize}
+					\item Perangkat Keras:
+					\begin{itemize}
+						\item Processor Intel(R) Core(TM) i3-2120 CPU @ 3.30GHz
+						\item RAM 4096 GB
+						\item Hard disk 500 GB
+					\end{itemize}
+					\item Perangkat Lunak:
+					\begin{itemize}
+						\item Sistem operasi Ubuntu LTS 14.04.03
+						\item MySQL 14.14 Distrib 5.5.44
+					\end{itemize}
+				\end{itemize}
+				\item Komputer Penguji:
+				\begin{itemize}
+					\item Perangkat Lunak:
+					\begin{itemize}
+						\item Sistem operasi Windows 7 dan Windows 8.1
+						\item Apache Jmeter 2.13
+					\end{itemize}
+				\end{itemize}
+				
 			\end{itemize}
 			
+			Untuk akses ke masing-masing komponen, dibutuh pembagian alamat IP sesuai dengan jaringan AJK yaitu :
+			
+			\begin{itemize}
+				\item Balancer pada 10.151.36.37
+				\item Worker 1 pada 10.151.36.21
+				\item Worker 2 pada 10.151.36.34
+				\item Worker 3 pada 10.151.36.201
+				\item Worker 4 pada 10.151.36.203
+				\item Server Basis Data pada 10.151.36.205
+				\item Penguji pada 10.151.36.24, 10.151.36.25, 10.151.36.26, 10.151.36.27,
+				10.151.36.31 dan 10.151.36.32
+			\end{itemize}
+			
+		\section{Skenario Uji Coba}
+		Pengujian menggunakan aplikasi berbasis web yang dijalankan pada worker. Aplikasi yang digunakan adalah aplikasi Penerimaan Peserta Didik Baru Kota Surabaya tahun 2015. Skenario pengujian dibedakan menjadi 2 bagian yaitu :
+		\begin{itemize}
+			\item \textbf{Uji Fungsionalitas}. Pengujian ini didasarkan pada fungsionalitas yang disajikan sistem. Sistem sendiri memiliki 3 fitur utama yaitu pembagi beban, kontrol layanan dan halaman admin.
+			\item Uji Performa. Pengujian ini untuk menguji ketahanan sistem terhadap sejumlah permintaan yang masuk. Pengujian dilakukan dengan melakukan benchmark pada sistem.
+		\end{itemize}
+		 
 
 \appendix % Halaman lampiran, dengan judul LAMPIRAN X
 
