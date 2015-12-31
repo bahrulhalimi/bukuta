@@ -693,12 +693,149 @@ key_buffer		= 16M
 			\end{itemize}
 			
 		\section{Skenario Uji Coba}
-		Pengujian menggunakan aplikasi berbasis web yang dijalankan pada worker. Aplikasi yang digunakan adalah aplikasi Penerimaan Peserta Didik Baru Kota Surabaya tahun 2015. Skenario pengujian dibedakan menjadi 2 bagian yaitu :
-		\begin{itemize}
-			\item \textbf{Uji Fungsionalitas}. Pengujian ini didasarkan pada fungsionalitas yang disajikan sistem. Sistem sendiri memiliki 3 fitur utama yaitu pembagi beban, kontrol layanan dan halaman admin.
-			\item Uji Performa. Pengujian ini untuk menguji ketahanan sistem terhadap sejumlah permintaan yang masuk. Pengujian dilakukan dengan melakukan benchmark pada sistem.
-		\end{itemize}
-		 
+			Pengujian menggunakan aplikasi berbasis web yang dijalankan pada worker. Aplikasi yang digunakan adalah aplikasi Penerimaan Peserta Didik Baru Kota Surabaya tahun 2015. Skenario pengujian dibedakan menjadi 2 bagian yaitu :
+			\begin{itemize}
+				\item \textbf{Uji Fungsionalitas}. Pengujian ini didasarkan pada fungsionalitas yang disajikan sistem. Sistem sendiri memiliki 3 fitur utama yaitu pembagi beban, kontrol layanan dan halaman admin.
+				\item \textbf{Uji Performa}. Pengujian ini untuk menguji ketahanan sistem terhadap sejumlah permintaan yang masuk. Pengujian dilakukan dengan melakukan benchmark pada sistem.
+			\end{itemize}
+			
+			\subsection{Skenario Uji Fungsionalitas}
+				Dengan adanya tiga fitur pada balancer, sehingga pengujian akan dilakukan pada tiga fitur secara terpisah.
+				\begin{itemize}
+					\item \textbf{Pembagi Beban} \\
+					Sistem yang berjalan akan memisahkan permintaan yang menuju	ke halaman insert dan halaman view. Pada pengujian ini diharapkan setiap permintaan diarahkan ke klaster yang sesuai. Permintaan dari pengguna dilihat dari URL yang diakses.
+					\item \textbf{Kontrol Layanan} \\
+					Kontrol Layanan akan mengeluarkan secara sementara worker yang sedang tidak aktif dari klasternya. Ketika worker sudah kembali pada fase aktif dan siap melayani, kontrol layanan akan kembali memasukkan worker ke dalam sistem. Pengujian ini akan memastikan worker yang sedang tidak aktif, benar-benar tidak mendapatkan aliran permintaan dari pengguna.
+					\item \textbf{Halaman Admin} \\
+					Pengujian dilakukan dengan pengaksesan halaman admin yang disediakan sistem dan disesuaikan dengan harapan luaran yang didapatkan. Beberapa hal yang akan diuji berdasarkan pengendali pada halaman admin seperti yang tertera pada Tabel
+				\end{itemize}
+				
+				\begin{longtable}{|p{0.05\textwidth}|p{0.17\textwidth}|p{0.4\textwidth}|p{0.2\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+					
+					% Kepala tabel, berulang di setiap halaman
+					\caption{Implementasi Uji Fungsionalitas Halaman Admin} \label{tabelUjiFungsionalitas} \\
+					\hline
+					\textbf{No} & \textbf{Pengendali} & \textbf{Uji Coba} & \textbf{Hasil Harapan} \\ \hline
+					
+					\endhead
+					\endfoot
+					\endlastfoot
+					
+					% Isi Tabel
+					
+					1 & /index & Melihat status balancer & Status balancer (aktif atau tidak) \\ \cline{3-4}
+					&& Mengaktifkan	balancer & Status balancer aktif dan servis balancer berjalan \\ \cline{3-4}
+					&& Mematikan balancer & Status balancer nonaktif dan servis balancer mati \\ \hline
+					2 & /cluster & Melihat daftar worker pada klaster & Daftar worker dalam klaster \\ \cline{3-4}
+					&& Menambahkan worker ke dalam klaster & Worker dalam klaster bertambah \\ \cline{3-4}
+					&& Menghapus worker dari klaster & Worker dalam klaster berkurang \\ \hline
+					3 & /path & Melihat daftar URL untuk setiap klaster & Daftar URL \\ \cline{3-4}
+					&& Menambahkan URL ke dalam klaster & URL dalam klaster bertambah \\ \cline{3-4}
+					&& Menghapus URL dari dalam klaster & URL dalam klaster berkurang \\ \hline
+					
+				\end{longtable}
+			
+			\subsection{Skenario Uji Performa}
+				Pada pengujian ini dilakukan benchmark dengan menggunakan aplikasi berbasis Java yaitu Apache JMeter (). Karena balancer melakukan pemisahan akses, pengujian akan berlangsung berupa insert dan view. Akses insert akan melakukan pendaftaran ke aplikasi PPDB Surabaya 2015 pada jenjang SMA Umum, sedangkan akses view akan menampilkan beberapa halaman pada aplikasi yang sama sekali tidak melakukan insert ke basis data. Apache JMeter akan	membuat thread untuk setiap akses ke aplikasi. Pengujian akan berlangsung bertahap mulai dari 500 thread, 1000 thread dan 1500 thread dalam satu detik. Dari hasil pengujian akan didapatkan waktu respon terhadap permintaan. Waktu ini akan dibandingkan dengan penggunaan arsitektur yang dibangun pada pelaksanaan PPDB Surabaya 2015. Arsitektur sistem PPDB Surabaya 2015 tertera pada Gambar \ref{gambarArsitekturPPDB}.
+		
+				\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+					\centering
+					\includegraphics[width=\linewidth]{contoh_img/arsitekturppdb}
+					\caption{Arsitektur Jaringan PPDB Surabaya 2015}
+					\label{gambarArsitekturPPDB}
+				\end{figure}
+		
+		\section{Hasil Uji Coba dan Evaluasi}
+			Berikut dijelaskan hasil uji coba dan evaluasi berdasarkan skenario yang sudah dijelaskan pada bab 5.2.
+			
+			\subsection{Uji Fungsionalitas}
+				Berikut dijelaskan hasil pengujian fungsionalitas pada sistem yang sudah dibangun.
+				
+				\subsubsection{Pembagi Beban}
+					
+			
+			
+			\subsection{Uji Performa}
+				Seperti yang sudah dijelaskan pada bab 5.2 pengujian performa dilakukan bertahap dengan menggunakan jumlah thread yang bertahap. Beberapa hal yang dibandingkan adalah sebagai berikut:
+				
+				\subsubsection{Penggunaan CPU dan Memori}
+					Pengujian dilakukan hingga jumlah thread mencapai 1500. Peningkatan penggunaan CPU dapat dilihat pada Gambar \ref{gambarUsage1500} dan lampiran. Sementara untuk penggunaan CPU pada balancer Nginx tertera pada Gambar \ref{gambarUsageNginx}.
+					
+					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+						\centering
+						\includegraphics[width=\linewidth]{contoh_img/usage/1500}
+						\caption{Penggunaan CPU dengan 1500 Thread}
+						\label{gambarUsage1500}
+					\end{figure}
+					
+					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+						\centering
+						\includegraphics[width=\linewidth]{contoh_img/usage/nginx}
+						\caption{Penggunaan CPU dengan Nginx Balancer}
+						\label{gambarUsageNginx}
+					\end{figure}
+					
+					Rata-rata penggunaan CPU ketika koneksi yang masuk berjumlah 1000-1500 koneksi adalah 100\%. Jika dibandingkan dengan penggunaan arsitektur lama pada aplikasi PPDB Surabaya 2015, balancer dengan NodeJS memiliki performas buruk dalam hal penggunaan CPU. 
+					
+					Sementara untuk penggunaan memori tidak ada perubahan yang signifikan. Ketika menggunakan thread berjumlah 500 dan 1500 kenaikan penggunaan memori hanya mencapai 10\% saja.
+				
+				\subsection{Waktu Respon}
+					Pengujian waktu respon dilakukan dengan melakukan insert dan view secara bersamaan ke dalam sistem. Waktu yang digunakan dicatat pada Apache JMeter dan disajikan pada tampilan grafik yang memudahkan untuk dibaca. Untuk setiap jumlah thread dilakukan percobaan hingga 5 kali dan diambil grafik yang menunjukkan	waktu terlama dan waktu tercepat pada keenam komputer penguji.
+					Untuk percobaan dengan 500 thread dan 1000 thread, hasilnya dapat dilihat pada lampiran. Pada percobaan dengan 1500 thread, dilakukan percobaan hingga 15 kali perulangan dengan jumlah worker dalam klaster insert yang berbeda. Pada 5 percobaan awal digunakan hanya dua worker yang bekerja pada klaster insert. Lima percobaan selanjutnya menjadi tiga worker. Dan selanjutnya empat worker yang tersedia digunakan sebagai klaster insert.
+					
+					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+						\centering
+						\includegraphics[width=\linewidth]{contoh_img/1500/balancer}
+						\caption{Waktu Respon 1500 Thread dengan Balancer NodeJS}
+						\label{gambar1500nodejs}
+					\end{figure}
+					
+					Percobaan pada 1500 thread ini dibandingkan dengan hasil percobaan 1500 thread pada arsitektur jaringan PPDB Surabaya 2015. Perbedaan waktu respon tertera pada \ref{gambar1500nodejs} dan \ref{gambar1500nginx}.
+					
+					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+						\centering
+						\includegraphics[width=\linewidth]{contoh_img/1500/nginx}
+						\caption{Waktu Respon 1500 Thread dengan Balancer Nginx}
+						\label{gambar1500nginx}
+					\end{figure}
+					
+					Nginx bekerja lebih cepat dibandingkan dengan balancer dengan NodeJS. Pada saat pengujian dengan menggunakan balancer NodeJS, permintaan akan terhenti sebelum selesai dieksekusi. Hal ini membuat waktu respon yang didapat menjadi lebih lama.
+					
+				\subsection{Permintaan Terlayani}
+					Pada percobaan dengan 1500 thread, balancer Node JS dengan 4 worker pada klaster insert dan 1 worker pada klaster view memberikan ketersediaan layanan lebih baik dibandingan dengan Nginx yang menggunakan 4 worker untuk semua aktivitas. Perbedaan ini didapatkan dari hasil benchmark yang kemudian di rata-rata nilai error yang muncul setelah benchmark selesai. Hasil yang didapat
+					tertera pada Tabel \ref{tabelGalat}.
+					
+					\begin{longtable}{|p{0.5\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+						
+						% Kepala tabel, berulang di setiap halaman
+						\caption{Daftar Nilai Galat pada Akses Halaman} \label{tabelGalat} \\
+						\hline
+						\textbf{Halaman} & \textbf{NodeJS} & \textbf{Nginx} \\ \hline
+						
+						\endhead
+						\endfoot
+						\endlastfoot
+						
+						% Isi Tabel
+						Entry No UASBN & 0,11\% & 21,89\% \\ \hline
+						Entry PIN & 0,11\% & 19,89\% \\ \hline
+						Inklusif & 0,00\% & 10,83\% \\ \hline
+						Jadwal & 0,00\% & 6,83\% \\ \hline
+						Ketentuan & 0,00\% & 17,17\% \\ \hline
+						Open Pendaftaran & 2,11\% & 9,00\% \\ \hline
+						Pendaftaran Dalam Kota & 0,11\% & 22,22\% \\ \hline
+						Pilih Sekolah1 & 0,11\% & 18,34\% \\ \hline
+						Pilih Sekolah2 & 0,11\% & 17,67\% \\ \hline
+						Pilih Sub Rayon & 0,11\% & 19,67\% \\ \hline
+						Rekapsmaumum & 0,00\% & 5,50\% \\ \hline
+						Sambutan & 2,17\% & 6,67\% \\ \hline
+						Selesai & 0,11\% & 16,56\% \\ \hline
+						Simpan Permanen & 0,11\% & 16,89\% \\ \hline
+						Submit & 0,11\% & 16,89\% \\ \hline
+						Subrayon & 0,00\% & 12,17\% \\ \hline
+						TOTAL & 0,33\% & 15,60\% \\ \hline
+						
+					\end{longtable}
 
 \appendix % Halaman lampiran, dengan judul LAMPIRAN X
 
