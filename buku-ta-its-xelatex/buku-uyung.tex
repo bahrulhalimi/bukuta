@@ -419,7 +419,120 @@
 				Algoritma berbasis konten diterapkan untuk menjalankan balancer. Algoritma ini hanya akan memilih \textit{worker} sesuai dengan \textit{cluster} yang aktif dan siap melayani permintaan. Daftar \textit{worker} yang dapat digunakan didapatkan dari basis data yang diakses dengan menggunakan model yang sudah di bahas pada sub-bab sebelumnya. Selanjutnya setiap permintaan akan dilempar ke \textit{worker} terpilih dan dilayani hingga permintaan selesai. Kode program untuk implementasi \textit{balancer} tertera pada Kode Program \ref{implemenBalancer}
 				
 				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Implementasi Algoritma Berbasis Konten pada Balancer},label=implemenBalancer]
-blabla
+var http = require('http'),
+	httpProxy = require('http-proxy'),
+	proxy = httpProxy.createProxyServer({}),
+	url = require('url'),
+	mongoose = require('mongoose');
+
+var clusterview_model = require('./model/clusterview_model')
+var clusterinsert_model = require('./model/clusterinsert_model')
+var aktivitas_model = require('./model/aktivitas_model')
+var path_model = require('./model/path_model')
+
+mongoose.connect('mongodb://127.0.0.1/tugasakhir');
+
+http.createServer(function(req, res) {
+
+	var cookie = req.headers.cookie;
+	var pengguna;
+	if (!cookie) cookie='kosong';
+	var awal = cookie.indexOf('csrf_cookie_name');
+	var akhir = cookie.indexOf(';', awal)
+	if (akhir > awal) {
+		pengguna = cookie.substring(awal, akhir)
+	}
+	else {
+		pengguna = cookie.substring(awal, cookie.length)
+	}
+	
+	var pathname = url.parse(req.url).pathname.split("/");
+	//console.log(cookie);
+	//console.log(cookie);
+	var petugas;
+	//console.log(pathname);
+	
+	
+	if (pathname[1] == '') {pathname[1]='home'}
+	
+	path_model.path.findOne({path: pathname[1]}, 'aksi', function(err, result){
+		if (err) return handleError(err);
+		console.log(result.aksi)
+		if (cookie=='kosong') {
+			petugas='10.151.36.201'
+			console.log(result.aksi)
+			console.log(pathname[1])
+			console.log("petugas : ", petugas);
+			proxy.web(req,res,{target : 'http://'+petugas},function(ee,aa){
+				console.log("ini error juga", ee)
+			});
+		}
+		else {
+			var cari = {cookie: pengguna, aksi: result.aksi}
+			aktivitas_model.findAktivitas(cari, function(erro, resu){				
+				if (erro) return console.log("kesalahan")
+				if (!resu) {
+					//dapatkan server yang dapat digunakan
+					if (result.aksi == 'view') {
+						clusterview_model.findOneClusterView(function(salah, hasil){
+							if (salah) return console.log(salah)
+							petugas = hasil.ip;
+							clusterview_model.updateLayani(hasil.ip, function(wa, we){
+								if (wa) return console.log(wa)
+								console.log(we);
+							})
+							console.log(result.aksi)
+							console.log(pathname[1])
+							console.log("petugas : ", petugas);
+							//tambah pengguna baru ke dalam basis data
+							var kumpul = {cookie: pengguna, ip: petugas, aksi: result.aksi}
+							aktivitas_model.tambahAktivitas(kumpul,function(errr, ress){
+								if (errr) return handleError(errr)
+								proxy.web(req, res, {target : 'http://'+petugas},function(ee,aa){
+									if(ee) console.log(ee)
+								});
+							})
+						})
+					}
+					else {
+						clusterinsert_model.findOneClusterInsert(function(salah, hasil){
+							if (salah) return console.log(salah)
+							petugas = hasil.ip;
+							clusterinsert_model.updateLayani(hasil.ip, function(wa, we){
+								if (wa) return console.log(wa)
+								console.log(we);
+							})
+							console.log(result.aksi)
+							console.log(pathname[1])
+							console.log("petugas : ", petugas);
+							//tambah pengguna baru ke dalam basis data
+							var kumpul = {cookie: pengguna, ip: petugas, aksi: result.aksi}
+							aktivitas_model.tambahAktivitas(kumpul,function(errr, ress){
+								if (errr) return handleError(errr)
+								proxy.web(req, res, {target : 'http://'+petugas}, function(ee,aa){
+									if(ee) console.log(ee)
+								});
+							})
+						})
+					}
+				}
+				else {
+					console.log(result.aksi)
+					console.log(pathname[1])
+					console.log("petugas : ", resu.ip)
+					proxy.web(req, res, {target : 'http://'+resu.ip}, function(ee, aa){
+						if(ee) console.log("di sini error", ee)
+					})
+				}
+			});
+		}
+	});
+	
+}).listen(80, function() {
+console.log('proxy listening on port 80');
+});
+				
+				
 				\end{lstlisting}
 		
 		\section{Rincian Implementasi Worker}
@@ -432,10 +545,9 @@ blabla
 			\end{itemize}
 			
 			
-			Terdapat empat \textit{worker} yang digunakan, dua server memiliki spesifikasi \textbf{kurang spek}
 		
-		\section{Implementasi Server Basis Data}
-			Hanya ada satu aplikasi yang berjalan yaitu MySQL yang memberikan servis basis data kepada \textit{worker}. Konfigurasi lanjut dibutuhkan agar setiap \textit{worker} dapat menggunakan basis data yang ada. Salah satunya adalah alamat IP yang digunakan server harus dikenali lingkungan implementasi, dalam hal ini lingkungan di Laboratorium AJK. Selain alamat IP, konfigurasi lain yang dapat meningkatkan koneksi ke basis data juga diatur, dalam kasus ini variabel \texttt{max\_connections} dapat diperbesar nilainya untuk mendapatkan koneksi yang lebih banyak. Konfigurasi lengkap basis data tertera pada Kode Sumber
+		\section{Rincian Implementasi Server Basis Data}
+			Hanya ada satu aplikasi yang berjalan yaitu MySQL yang memberikan servis basis data kepada \textit{worker}. Konfigurasi lanjut dibutuhkan agar setiap \textit{worker} dapat menggunakan basis data yang ada. Salah satunya adalah alamat IP yang digunakan server harus dikenali lingkungan implementasi, dalam hal ini lingkungan di Laboratorium AJK. Selain alamat IP, konfigurasi lain yang dapat meningkatkan koneksi ke basis data juga diatur, dalam kasus ini variabel \texttt{max\_connections} dapat diperbesar nilainya untuk mendapatkan koneksi yang lebih banyak. Konfigurasi lengkap basis data tertera pada Kode Sumber \ref{implemenDB}
 		    
 		    \begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Konfigurasi MySQL untuk Server Basis Data},label=implemenDB]
 #
@@ -752,7 +864,68 @@ key_buffer		= 16M
 				Berikut dijelaskan hasil pengujian fungsionalitas pada sistem yang sudah dibangun.
 				
 				\subsubsection{Pembagi Beban}
+					Dilakukan pengujian acak untuk mengakses aplikasi PPDB Surabaya 2015 melalui balancer NodeJS. Hasil pengujian seperti tertera pada Tabel
 					
+					\begin{longtable}{|p{0.3\textwidth}|p{0.2\textwidth}|p{0.4\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+						
+						% Kepala tabel, berulang di setiap halaman
+						\caption{Daftar Akses URL dan Worker yang Melayani} \label{tabelBagiBeban} \\
+						\hline
+						\textbf{URL} & \textbf{Aksi} & \textbf{Worker} \\ \hline
+						
+						\endhead
+						\endfoot
+						\endlastfoot
+						
+						% Isi Tabel
+						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
+						umum & view	& petugas :  10.151.36.201 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						rekap & view & petugas :  10.151.36.34 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
+						pendaftaran	& insert & petugas :  10.151.36.201 \\ \hline
+						umum & view & petugas :  10.151.36.201 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
+						rekap & view & petugas :  10.151.36.34 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
+						pendaftaran	& insert & petugas :  10.151.36.203 \\ \hline
+						pendaftaran	& insert & petugas :  10.151.36.203 \\ \hline
+						pendaftaran	& insert & petugas :  10.151.36.201 \\ \hline
+						umum & view & petugas :  10.151.36.201 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						rekap & view & petugas :  10.151.36.34 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						umum & view & petugas :  10.151.36.34 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
+						rekap & view & petugas :  10.151.36.34 \\ \hline
+						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
+						
+						
+					\end{longtable}
+					
+					Worker dengan alamat IP 10.151.36.201 dan 10.151.36.203 berada pada klaster insert dan worker dengan alamat IP 10.151.36.34 berada pada klaster view. Pada beberapa percobaan muncul akses view yang dilayani worker pada klaster insert. Ini karena worker tersebut memang menjadi worker default ketika terdapat permintaan yang tidak memiliki cookie di dalamnya.
+				
+				\subsubsection{Kontrol Layanan}
+				
+				\subsubsection{Halaman Admin}
 			
 			
 			\subsection{Uji Performa}
