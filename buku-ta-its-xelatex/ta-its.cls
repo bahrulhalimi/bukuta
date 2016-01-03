@@ -31,8 +31,8 @@
     \rhead[]{\thepage}
     \pagestyle{fancy}
     
-\RequirePackage[hypcap=true]{caption}
-    \captionsetup{labelfont=bf, justification=justified, singlelinecheck=false, format=plain}
+\RequirePackage[hypcap=true, font=footnotesize]{caption}
+    \captionsetup{labelfont=bf, justification=centering, singlelinecheck=false, format=plain}
 
 \RequirePackage{tabulary, booktabs, longtable, ltcaption, ltabptch}
 \RequirePackage[referable]{threeparttablex}

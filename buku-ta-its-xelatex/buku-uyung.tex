@@ -6,7 +6,7 @@
 
 
 % \title{Judul Bahasa Indonesia}{Judul Bahasa Inggris}
-\title{Rancang Bangun Sistem Load Balancing Menggunakan Algoritma Berbasis Konten dan Kontrol Ketersediaan Layanan}{Design and Implementasion of Load Balancing System with Content-Based Algorithm and Availability Control}{KI1502} 
+\title{Rancang Bangun Sistem Penyeimbang Beban pada Klaster Server dengan Prioritas Berbasis Konten dan Kontrol Ketersediaan Layanan}{Design and Implementation of Load Balancing System with Content Priority and Availability Control}{KI1502} 
 
 % \author{Nama Lengkap}{NRP}
 \author{Bahrul Halimi}{5111100014}
@@ -57,14 +57,14 @@
         Pada bab ini akan dipaparkan mengenai garis besar Tugas Akhir yang meliputi latar belakang, tujuan, rumusan dam batasan permasalahan, metodologi pembuatan Tugas Akhir, dan sistematika penulisan.
 
         \section{Latar Belakang}
-            Semakin berkembangnya internet di masyarakat membuat penggunaan aplikasi berbasis web semakin diminati. Pengguna aplikasi berbasis web ini dapat dijumpai diberbagai aktivitas harian masyarakat, diantaranya bank \emph{online}, \emph{e-commerce}, reservasi tempat secara \emph{online}, bahkan pendaftaran peserta didik baru secara \emph{online}. Hal ini membuat penyedia layanan aplikasi berbasis web harus menyediakan servis yang layak sehingga aplikasi tetap berjalan dengan baik walaupun pengguna semakin bertambah.\\
-			\indent Terjadinya \emph{bottleneck} (penumpukan permintaan) menjadi tantangan tersendiri ketika pengembang tidak memperhatikan sumber dayanya dan berujung pada gagalnya permintaan pengguna [1]. Muncul gagasan awal dengan penggunaan kelompok server yang akan menangani permintaan ini. Kelompok server ini akan secara bergantian melayani setiap permintaan terhadap aplikasi berbasis web ini. Dengan adanya tugas bergantian ini dibutuhkan sebuah komputer yang bertugas membagi beban kerja kelompok server. Komputer ini biasa disebut pembagi muat atau \emph{load balance}. Sistem kerja dari \emph{load balancer} ini menggunakan sebuah algoritma yang sudah ditanam untuk kemudian digunakan untuk memilih komputer mana yang harus melayani permintaan pengguna. \\
+            Semakin berkembangnya internet di masyarakat membuat penggunaan aplikasi berbasis web semakin diminati. Pengguna aplikasi berbasis web ini dapat dijumpai diberbagai aktivitas harian masyarakat, diantaranya bank \emph{online}, \emph{e-commerce}, reservasi tempat secara \emph{online}, bahkan pendaftaran peserta didik baru secara \emph{online} (PPDB Surabaya). Hal ini membuat penyedia layanan aplikasi berbasis web harus menyediakan servis yang layak sehingga aplikasi tetap berjalan dengan baik walaupun pengguna semakin bertambah.\\
+			\indent Terjadinya \emph{bottleneck} (penumpukan permintaan) menjadi tantangan tersendiri ketika pengembang tidak memperhatikan sumber dayanya dan berujung pada gagalnya permintaan pengguna \cite{paperAlgoritma}. Muncul gagasan awal dengan penggunaan kelompok server yang akan menangani permintaan ini. Kelompok server ini akan secara bergantian melayani setiap permintaan terhadap aplikasi berbasis web ini. Dengan adanya tugas bergantian ini dibutuhkan sebuah komputer yang bertugas membagi beban kerja kelompok server. Komputer ini biasa disebut pembagi muat atau \emph{load balancer}. Sistem kerja dari \emph{load balancer} ini menggunakan sebuah algoritma yang sudah ditanam untuk kemudian digunakan untuk memilih komputer mana yang harus melayani permintaan pengguna. Pada titik ini, banyak penyedia layanan web memutuskan menggunakan Nginx sebagai \textit{load balancer}, dengan alasan kemampuannya menangani banyak permintaan, dibangingkan Apache \cite{quoraNginx}\cite{aosaNginx}. \\
 			\indent Di sisi lain sebuah aplikasi berbasis web memiliki dua jenis halaman yang mungkin di akses. Yang pertama adalah halaman berisi informasi, baik hasil \emph{query} basis data maupun tidak, selanjutnya disebut halaman informasi dan yang kedua adalah halaman yang digunakan untuk mengirimkan data ke server, dalam hal ini berupa form pengisian informasi, selanjutnya disebut halaman daftar. \\
-			\indent Dua jenis halaman ini memiliki kebutuhan yang berbeda. Untuk halaman informasi, pengguna mengharapkan akses yang cepat sedangkan untuk halaman daftar, pengguna mengharapkan data yang dimasukkan dapat diproses dengan aman. Padahal di dalam penggunaan algoritma sebelumnya dan dengan teknologi yang ada, \emph{load balancer} tidak dapat memisahkan dua jenis permintaan ini. Algoritma yang ada sebelumnya hanya memisahkan banyak permintaan sesuai dengan ketersediaan server melayani pengguna. Padahal ketika proses pemasukkan data di dalam halaman daftar, seharusnya bisa digunakan untuk melayani permintaan pada halaman informasi. \\
+			\indent Dua jenis halaman ini memiliki kebutuhan yang berbeda. Untuk halaman informasi, pengguna mengharapkan akses yang cepat sedangkan untuk halaman daftar, pengguna mengharapkan data yang dimasukkan dapat diproses dengan aman. Padahal di dalam penggunaan mekanisme sebelumnya dan dengan teknologi yang ada, \emph{load balancer} tidak dapat memisahkan dua jenis permintaan ini. Mekanisme yang ada sebelumnya hanya memisahkan banyak permintaan sesuai dengan ketersediaan server melayani pengguna. Padahal ketika proses pemasukkan data di dalam halaman daftar, seharusnya bisa digunakan untuk melayani permintaan pada halaman informasi. \\
 			\indent Muncullah gagasan lain mengenai pengelompokkan permintaan berdasarkan konten yang diinginkan oleh pengguna. Pengelompokkan ini didasarkan pada dua halaman sebelumnya, yakni halaman informasi dan halaman daftar. Tujuannya untuk mengatur penggunaan sumber daya yang digunakan. Dua kelompok server terpisah akan melayani masing-masing permintaan yang berbeda. Dengan permintaan satu tipe dalam satu kelompok server, membuat kerja server menjadi lebih terpusat dan mengurangi beban yang besar. \\
 			\indent Berbeda dengan yang terjadi saat ini, sebuah server atau bahkan dalam sebuah kelompok server, harus melayani berbagai bentuk permintaan dari pengguna, sehingga menyebabkan beban kerja server meningkat. Bahkan waktu dalam penyelesaian suatu permintaan tidak dapat diukur dalam satuan waktu yang sama karena berbedanya bentuk permintaan pengguna. \\
 			\indent Sementara itu di dalam kelompok server yang bekerja bergantian melayani permintaan, ada kalanya sebuah server mengalami gangguan dan sama sekali tidak dapat melayani setiap permintaan pengguna. Padahal setiap permintaan yang ada masih diteruskan oleh load balancer pada server tersebut. Tidak adanya mekanisme untuk memindahkan permintaan dari server mati ke server yang masih aktif membuat akses ke sebuah web menjadi tidak maksimal.
-			Oleh karena itu dibangunlah sistem ini. Dengan adanya sistem load balancing menggunakan algoritma berbasis konten yang memisahkan antara halaman informasi dan halaman daftar diharapkan dapat meningkatkan jumlah pengguna suatu halaman web dengan banyaknya bentuk permintaan dari pengguna.
+			Oleh karena itu dibangunlah sistem ini. Dengan adanya sistem load balancing menggunakan algoritma berbasis konten yang memisahkan antara halaman informasi dan halaman daftar diharapkan dapat meningkatkan jumlah pengguna suatu halaman web dengan banyaknya bentuk permintaan dari pengguna. Sistem ini juga akan dibandingkan dengan sistem yang sudah berjalan sebelumnya dengan studi kasus sistem Pendaftaran Peserta Didik Baru Surabaya tahun 2015 dengan Nginx sebagai \textit{load balancer}.
 
             
         \section{Rumusan Masalah}
@@ -74,6 +74,7 @@
 			\item Bagaimana menentukan pengelompokkan server berdasarkan konten permintaan pengguna ?
 			\item Bagaimana meningkatkan jumlah pengakses pada halaman informasi dengan terpisahnya akses antara halaman informasi dan halaman daftar ?
 			\item Bagaimana menjaga pengguna tetap dilayani kelompok ser-ver yang tersedia hingga permintaan selesai ?
+			\item Bagaimana perbandingan penggunaan CPU dan memori antara sistem baru dan sistem yang sudah berjalan sebelumnya ?
 			\end{enumerate}
 
         \section{Batasan Masalah}
@@ -83,6 +84,7 @@
 			\item Pendefinisian kelompok konten permintaan pengguna dilakukan manual oleh manusia.
 			\item Sistem pembagi beban kerja diimplementasikan untuk aplikasi berbasis web.
 			\item Kelompok server yang bekerja dibedakan dengan besar memori yang digunakan.
+			\item Sistem yang akan dibandingkan adalah sistem untuk PPDB Surabaya tahun 2015 dengan Nginx sebagai \textit{load balancer}.
 			\end{enumerate}
 
         \section{Tujuan}
@@ -97,12 +99,12 @@
 			Dengan dibangunnya \emph{load balancer} ini diharapkan jumlah pengakses yang mampu dilayani oleh kelompok server untuk halaman informasi menjadi lebih banyak dibandingkan dengan penggunaan algoritma dan teknologi \emph{load balancing} yang sudah ada.
 
    \chapter{LANDASAN TEORI}
-        \section{Algoritma Berbasis Konten}
-			Munculnya algoritma ini didasarkan pada beberapa jenis permintaan pengguna yang mengakses suatu halaman web. Sebuah server melayani berbagai jenis permintaan akan memberikan waktu balasan yang beragam pula. Hal ini akan meningkatkan beban kerja server. \\
-			\indent Dengan adanya pemisahan permintaan pengguna berdasarkan konten, kelompok server akan melayani setiap permintaan yang memang ditujukan untuknya server tersebut. Bentuk permintaan akan selalu sama sehingga waktu untuk melayani permintaan menjadi sama dan lebih terkontrol. Beban kerja server akan lebih ringan dengan adanya pembagian beban berdasarkan algoritma ini. [1]
+        \section{Prioritas Berbasis Konten}
+			Munculnya mekanisme ini didasarkan pada beberapa jenis permintaan pengguna yang mengakses suatu halaman web. Sebuah server melayani berbagai jenis permintaan akan memberikan waktu balasan yang beragam pula. Hal ini akan meningkatkan beban kerja server. \\
+			\indent Dengan adanya pemisahan permintaan pengguna berdasarkan konten, kelompok server akan melayani setiap permintaan yang memang ditujukan untuknya server tersebut. Bentuk permintaan akan selalu sama sehingga waktu untuk melayani permintaan menjadi sama dan lebih terkontrol. Beban kerja server akan lebih ringan dengan adanya pembagian beban berdasarkan algoritma ini \cite{paperAlgoritma}.
 
         \section{Node JS}
-			Merupakan sebuah platform yang dibangun di atas Chrome's JavaScript runtime dengan teknologi V8 yang mendukung proses server yang bersifat long-running. Tidak seperti platform modern yang mengandalkan multithreading, NodeJS memilih menggunakan asynchronous I/O eventing. Karena inilah NodeJS mampu bekerja dengan konsumsi memori rendah. [2] [3]
+			Merupakan sebuah platform yang dibangun di atas Chrome's JavaScript runtime dengan teknologi V8 yang mendukung proses server yang bersifat long-running. Tidak seperti platform modern yang mengandalkan multithreading, NodeJS memilih menggunakan asynchronous I/O eventing. Karena inilah NodeJS mampu bekerja dengan konsumsi memori rendah \cite{webNodeJS}\cite{useNodeJS}.
 			
 			Teknologi yang tidak memanfaatkan multi-thread ini memudahkan pengembang yang terkadang kesulitan mengatur sumberdaya yang digunakan thread. Karena tidak mungkin ada sumberdaya yang terkunci karena thread yang berjalan. Akhirnya banyak yang memanfaatkan kemampuan dasar NodeJS sebagai web server.
 			
@@ -114,10 +116,10 @@
 			\end{figure}
 			
 			
-			Dengan adanya callback untuk setiap penggunaan fungsi, memungkinkan setiap pemanggilan fungsi yang tidak menghasilkan apapun, NodeJS akan \textit{sleep}
+			Dengan adanya callback untuk setiap penggunaan fungsi, memungkinkan setiap pemanggilan fungsi yang tidak menghasilkan apapun, NodeJS akan \textit{sleep}.
 
         \section{Angular JS}
-			Angular JS membantu dalam pembangunan halaman HTML menjadi lebih dinamis. Merupakan sebuah kumpulan alat bantu yang mampu bekerja baik dengan pustaka lainnya. Setiap fitur dapat dimodifikasi sesuai dengan kebutuhan aplikasi. Menjadi salah satu kerangka kerja yang memfasilitasi pembangunan aplikasi kompleks yang terorganisir dan mudah dirawat. Angular JS lebih dikenal pada kemampuannya melayani sebuah situs web yang menggunakan halaman tunggal untuk penyajian data yang beragam. [4][5]
+			Angular JS membantu dalam pembangunan halaman HTML menjadi lebih dinamis. Merupakan sebuah kumpulan alat bantu yang mampu bekerja baik dengan pustaka lainnya. Setiap fitur dapat dimodifikasi sesuai dengan kebutuhan aplikasi. Menjadi salah satu kerangka kerja yang memfasilitasi pembangunan aplikasi kompleks yang terorganisir dan mudah dirawat. Angular JS lebih dikenal pada kemampuannya melayani sebuah situs web yang menggunakan halaman tunggal untuk penyajian data yang beragam \cite{clientSideWeb}\cite{angularJS}.
 			
 			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 				\centering
@@ -129,7 +131,7 @@
 			Dengan menggunakan berkas JavaScript Angular yang didapatkan dari CDN (\textit{Content Delivery Network}) atau media lain, pengembang dapat dengan mudah menggunakan fitur yang ditawarkan Angular JS.
 			
 		\section{MongoDB}
-			Merupakan salah satu NoSQL (Not only SQL) terkenal yang dirancang untuk mengelola polimorfik, obyek, dan struktur data yang terus berkembang. MongoDB adalah basis data open-source yang memungkinan mengubah skema dengan cepat sementara fungsi yang diharapkan dari basis data tradisional masih berjalan. [6] [7]
+			Merupakan salah satu NoSQL (Not only SQL) terkenal yang dirancang untuk mengelola polimorfik, obyek, dan struktur data yang terus berkembang. MongoDB adalah basis data open-source yang memungkinan mengubah skema dengan cepat sementara fungsi yang diharapkan dari basis data tradisional masih berjalan \cite{selfDescription}\cite{mongoDB}.
 			
 			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 				\centering
@@ -141,13 +143,13 @@
 			Model penyimpanan yang menyerupai JSON membuat pengguna dapat dengan mudah mengakses dan mengubah data yang ada. Karena penyimpanannya yang menyerupai JSON, membuat struktur penyimpanan dapat berubah sewaktu-waktu tanpa mengubah konfigurasi sebelumnya.
 		
 		\section{Apache JMeter}
-			Menjadi salah satu alat bantu untuk melakukan tes muat dan mengukur performa aplikasi, salah satunya berbasis web. Mampu melakukan pengujian pada berbagai protokol diantaranya Web, FTP, basis data, Mail (SMTP, POP3, IMAP), serta MongoDB. [8]
+			Menjadi salah satu alat bantu untuk melakukan tes muat dan mengukur performa aplikasi, salah satunya berbasis web. Mampu melakukan pengujian pada berbagai protokol diantaranya Web, FTP, basis data, Mail (SMTP, POP3, IMAP), serta MongoDB \cite{JMeter}.
 			
 			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 				\centering
-				\includegraphics[width=\linewidth]{contoh_img/contoh_mongodb}
-				\caption{Contoh Bentuk Penyimpanan Data MongoDB}
-				\label{contohMongoDB}
+				\includegraphics[width=\linewidth]{contoh_img/contoh_jmeter}
+				\caption{Contoh Antar Muka Apache JMeter}
+				\label{contohJMeter}
 			\end{figure}
 			
 			Apache JMeter berbasis Java. Cara kerjanya yang menyerupai sebuah browser, karena desain awal memang ditujukan untuk menguji aplikasi berbasis web, mampu mengakses halaman website yang memiliki sumber daya statis maupun dinamis. Namun ada beberapa fitur browser yang tidak ditiru oleh Apache JMeter.
@@ -201,12 +203,14 @@
 			    	\label{gambarSistem}
 			    \end{figure}
 			    
-			    Load balancer memiliki daftar worker dan URL yang akan digunakan dalam operasional load balancing. Untuk memudahkan administrator sistem dalam mengkonfigurasikan worker dan menambahkan daftar URL yang ada, disediakan sebuah halaman admin yang berjalan pada port 3000. Selain dengan halaman admin ini, administrator sistem sudah dibantu untuk mengeluarkan worker yang tidak aktif dari pekerjaannya dalam proses load balancing oleh sistem secara otomatis dalam rentang waktu tertentu.
+			    Load balancer memiliki daftar worker dan URL yang akan digunakan dalam operasional load balancing. Daftar ini disimpan dalam MongoDB agar daftar yang dimiliki konsiste. MongoDB menyimpan data dalam bentuk JSON sehingga koneksi untuk mendapatkan daftar ini cepat.
+			    
+			    Untuk memudahkan administrator sistem dalam mengkonfigurasikan worker dan menambahkan daftar URL yang ada, disediakan sebuah halaman admin yang berjalan pada port 3000. Selain dengan halaman admin ini, administrator sistem sudah dibantu untuk mengeluarkan worker yang tidak aktif dari pekerjaannya dalam proses load balancing oleh sistem secara otomatis dalam rentang waktu tertentu.
 			    
 			    
 			    
 			
-			\subsection{Desain Rinci Balancer}
+			\subsection{Desain Balancer}
 			    \textit{Balancer} berperan penting dalam sistem. Setiap permintaan yang masuk ke dalam sistem akan diolah oleh balancer dan dikembalikan ke pengguna setelah mendapat balasan dari \textit{worker}. Ada beberapa aplikasi yang sudah menyediakan fitur \textit{balancing}, namun dalam Tugas Akhir ini digunakan NodeJS dan MongoDB untuk membangun fitur \textit{balancing}. Diagram arsitektur Balancer tertera pada Gambar \ref{gambarArsitekturBalancer} dan diagram proses pengguna mengakses halaman web tertera pada Gambar \ref{gambarKerjaBalancer}. 
 			    
 			    \begin{figure}[] % h = pasti berada di bawah teks yang ada di atas
@@ -227,7 +231,7 @@
 			    	\label{gambarKerjaBalancer}
 			    \end{figure}
 			
-			\subsection{Deskripsi Rinci Worker}
+			\subsection{Desain Worker}
 				Worker bekerja sebagai pemberi layanan. Menunggu permintaan yang diteruskan dari balancer dan mengembalikan lagi ke balancer. Aplikasi berbasis web yang akan diakses pengguna dijalankan pada worker. Diagram arsitektur worker tertera pada Gambar \ref{gambarArsitekturWorker}
 				
 				\begin{figure}[] % h = pasti berada di bawah teks yang ada di atas
@@ -239,7 +243,7 @@
 				
 				Di dalam sistem yang dibangun, peran \textit{worker} sudah digambarkan pada diagram proses yang tertera pada Gambar \ref{gambarKerjaBalancer}. Pengguna tidak dapat mengakses \textit{worker} secara langsung. Semua akses harus melalui \textit{balancer}. Walaupun sebenarnya semua aplikasi berada pada \textit{worker}.
 			
-			\subsection{Deskripsi Rinci Halaman Admin}
+			\subsection{Desain Halaman Admin}
 				Halaman ini hanya akan diakses oleh administrator sistem. Adanya halaman ini ditujukan untuk memudahkan admin dalam mengelola cluster dan mengelola URL yang tersimpan di dalam basis data. Digram arsitektur halaman admin tertera pada Gambar \ref{gambarArsitekturWeb}.
 				
 				\begin{figure}[] % h = pasti berada di bawah teks yang ada di atas
@@ -269,7 +273,7 @@
 
 				\end{longtable}
 				
-			\subsection{Deskripsi Server Basis Data}
+			\subsection{Desain Server Basis Data}
 				Dalam menjalankan sebuah aplikasi yang menuntut kemampuan akses hingga banyak pengguna, banyak pengembang yang memisahkan antara server aplikasi dan server basis data. Aplikasi yang berjalan dalam server ini hanya MySQL sebagai basis data seperti yang tertera pada \ref{gambarArsitekturDB}.
 			    
 				\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
@@ -287,7 +291,7 @@
         Bab ini membahas implementasi sistem Load Balancing secara rinci. Pembahasan dilakukan secara rinci untuk setiap komponen yang ada yaitu: Balancer, Worker, Halaman Admin, dan Server Basis Data.
         
         \section{Lingkungan Implementasi}
-	        Lingkungan implementasi dan pengembangan dilakukan menggunakan komputer dengan spesifikasi Intel(R) Core(TM) i3-2120 CPU @ 3.30GHz dengan memori 8 GB. Perangkat lunak yang digunakan dalam pengembangan adalah sebagai berikut :
+	        Lingkungan implementasi dan pengembangan dilakukan menggunakan komputer dengan spesifikasi Intel(R) Core(TM) i3-2120 CPU @ 3.30GHz dengan memori 8 GB di Laboratorium Arsitektur dan Jaringan Komputer, Teknik Informatika ITS. Perangkat lunak yang digunakan dalam pengembangan adalah sebagai berikut :
 	        \begin{itemize}
 	        	\item Sistem Operasi Linux Ubuntu Server 14.04.01 LTS
 	        	\item Desktop xfce4
@@ -298,55 +302,16 @@
 	        	\item MongoDB versi 3.2.0 untuk basis data
 	        	\item Express versi 4.13.1 untuk web server halaman admin
 	        	\item Angular JS versi 1.5.0-beta.2 untuk pengolahan data pada halaman admin
-	        	\item Nginx dan MySQL yang berjalan di \textit{worker} dan server basis data
-	        	\item Paket \LaTeX untuk pembuatan tugas akhir
+	        	\item Nginx versi 1.4.6 untuk implementasi sistem PPDB Surabaya tahun 2015
+	        	\item Paket \LaTeX untuk pembuatan buku tugas akhir
 	        	\item Peramban \textit{web} Mozilla Firefox
 	        \end{itemize}
 	        
 		\section{Rincian Implementasi Balancer}
 		
-			\textit{Balancer} dibangun dengan menggunakan Node JS, MongoDB dan beberapa paket yang diinstall secara terpisah. Paket-paket ini diinstall dengan menggunakan npm (\texttt{https://www.npmjs.com/}) yang memang digunakan sebagai \textit{command line} oleh Node JS. Pada sub bab ini akan dijelaskan implementasi mulai dari instalasi Node JS hingga \textit{balancer} siap digunakan.
+			\textit{Balancer} dibangun dengan menggunakan Node JS, MongoDB dan beberapa paket yang diinstall secara terpisah. Paket-paket ini diinstall dengan menggunakan npm (\texttt{https://www.npmjs.com/}) yang memang digunakan sebagai \textit{command line} oleh Node JS. Pada sub bab ini akan dijelaskan implementasi balancer hingga \textit{balancer} siap digunakan.
 			
-			\subsection{Instalasi Node JS}
-				Ada banyak cara untuk menginstall NodeJS ke dalam komputer, salah satunya melalui kode sumber yang dapat diunduh pada halaman \texttt{https://nodejs.org/en/download/}. Setelah diunduh berkas perlu diekstrak untuk melanjutkan instalasi. Di dalam folder hasil ekstraksi, terdapat berkas \texttt{README.md} yang berisi langkah untuk menginstall NodeJS ke komputer. Semua langkah dilakukan melalui \textit{command line} dan langkah installasinya adalah sebagai berikut
-				
-				\begin{itemize}
-					\item Pindah ke folder dimana Node JS di ekstrak dengan perintah \texttt{cd \{\$pathdownload\}/node-v4.2.3/}.
-					\item Di dalam folder jalankan perintah berikut secara berurutan \texttt{./configure}, \texttt{make}, \texttt{make install}.
-					\item Jika terdapat pesan \textit{error} mengenai beberapa pustaka yang belum terinstall sebelumnya, jalankan perintah \texttt{sudo apt-get install -f}.
-					\item Semua perintah dilakukan pada hak akses \textit{root}.
-				\end{itemize}
-				
-				Untuk memastikan bahwa Node JS sudah berjalan dan siap digunakan, dijalankan perintah dan dihasilkan output seperti pada Gambar \ref{gambarCekNodeJS}.
-				
-				\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
-					\centering
-					\includegraphics[width=\linewidth]{contoh_img/ceknodejs}
-					\caption{Contoh Node JS Siap Digunakan}
-					\label{gambarCekNodeJS}
-				\end{figure}
-			
-			\subsection{Installasi MongoDB}
-				MongoDB menyediakan repositori tersendiri untuk mengunduh MongoDB. Setelah terkoneksi dengan repositori yang dimiliki MongoDB, instalasi dapat berlanjut dengan menggunakan perintah \texttt{apt-get}. Berikut ini langkah-langkah instalasi MongoDB.
-				
-				\begin{itemize}
-					\item Tambahkan \textit{public key} yang digunakan untuk manajemen paket pada sistem operasi dengan perintah \texttt{sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10}.
-					\item Buat file repositori untuk MongoDB pada sistem komputer dengan perintah \texttt{echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list}. Perintah ini disesuaikan dengan distro Linux yang digunakan.
-					\item Perbaharui basis data manajemen paket dengan perintah \texttt{sudo apt-get update}.
-					\item Install MongoDB ke komputer dengan perintah \texttt{sudo apt-get install -y mongodb-org}.
-					\item Setelah instalasi selesai jalankan MongoDB dengan perintah \texttt{sudo service mongod start}.
-					\item MongoDB siap digunakan dengan tampilan pada Gambar \ref{gambarCekMongoDB}.
-					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
-						\centering
-						\includegraphics[width=\linewidth]{contoh_img/cekmongodb}
-						\caption{Contoh MongoDB dan Daftar Database}
-						\label{gambarCekMongoDB}
-					\end{figure}
-					
-				\end{itemize}
-				
-				
-			\subsection{Instalasi Paket}
+			\subsection{Instalasi Paket untuk NodeJS}
 			Seperti yang sudah dijelaskan sebelumnya, instalasi paket yang dibutuhkan menggunakan npm. Cara kerja npm ini hanya mengunduh paket untuk kebutuhan sistem, hanya saja beberapa paket bisa diinstall pada sistem operasi dan dapat digunakan pada \textit{command line}. 
 			Untuk mengunduh paket yang dibutuhkan secara bersamaan, digunakan perintah \texttt{npm install}. Perintah ini akan membaca file \texttt{package.json} yang berisi daftar paket yang akan digunakan. Isi \texttt{package.json} untuk Tugas Akhir ini seperti pada Kode Sumber \ref{packageJson}
 
@@ -416,7 +381,52 @@
 		        Kode program untuk setiap model tertera pada lampiran.
 			
 			\subsection{Implementasi Balancer}
-				Algoritma berbasis konten diterapkan untuk menjalankan balancer. Algoritma ini hanya akan memilih \textit{worker} sesuai dengan \textit{cluster} yang aktif dan siap melayani permintaan. Daftar \textit{worker} yang dapat digunakan didapatkan dari basis data yang diakses dengan menggunakan model yang sudah di bahas pada sub-bab sebelumnya. Selanjutnya setiap permintaan akan dilempar ke \textit{worker} terpilih dan dilayani hingga permintaan selesai. Kode program untuk implementasi \textit{balancer} tertera pada Kode Program \ref{implemenBalancer}
+				Mekanisme prioritas berbasis konten diterapkan untuk menjalankan balancer. Mekanisme ini hanya akan memilih \textit{worker} sesuai dengan \textit{cluster} yang aktif dan siap melayani permintaan. Daftar \textit{worker} yang dapat digunakan didapatkan dari basis data yang diakses dengan menggunakan model yang sudah di bahas pada sub-bab sebelumnya. Selanjutnya setiap permintaan akan dilempar ke \textit{worker} terpilih dan dilayani hingga permintaan selesai. Daftar paket yang akan digunakan tertera pada Kode Sumber \ref{paketBalancer}.
+				
+				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Paket untuk Balancer},label=paketBalancer]
+var http = require('http'),
+	httpProxy = require('http-proxy'),
+	proxy = httpProxy.createProxyServer({}),
+	url = require('url'),
+	mongoose = require('mongoose');
+				
+				\end{lstlisting}
+				
+				Balancer membutuhkan data yang berhubungan dengan \textit{worker} yang aktif dan kategori URL yang akan diakses pengguna. Data ini didapatkan dengan melakukan koneksi ke MongoDB dengan menggunakan model yang dijelaskan sebelumnya. Kode program untuk melakukan koneksi ini tertera pada Kode Sumber \ref{konekMongoDB}.
+				
+				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Koneksi Balancer ke MongoDB},label=konekMongoDB]
+var clusterview_model = require('./model/clusterview_model')
+var clusterinsert_model = require('./model/clusterinsert_model')
+var aktivitas_model = require('./model/aktivitas_model')
+var path_model = require('./model/path_model')
+
+mongoose.connect('mongodb://127.0.0.1/tugasakhir');
+				
+				\end{lstlisting}
+				
+				Balancer seakan-akan menjadi server yang menyediakan aplikasi berbasis web dan berjalan pada port 80. Untuk membuat servis ini, NodeJS perlu menjalankan servis sebagai web server dengan perintah \texttt{http.createServer(function(req, res)\{\}}. Sehingga semua permintaan pengguna dapat masuk ke dalam \textit{balancer} dan diolah \textit{balancer}.
+				
+				\textit{Balancer} akan memberikan \textit{worker} yang aktif untuk melayani setiap pengguna yang masuk. Pasangan pengguna dan \textit{worker} ini akan disimpan pada koleksi aktivitas sesuai dengan jenis halaman yang diakses. Untuk membedakan setiap pengguna, \textit{balancer} akan membaca cookie dari pengguna dan menggunakan cookie ini sebagai id setiap pengguna. Pengambilan cookie tertera pada Kode Sumber \ref{cookiePengguna}
+				
+				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Pengambilan Cookie Pengguna},label=cookiePengguna]
+var cookie = req.headers.cookie;
+var pengguna;
+if (!cookie) cookie='kosong';
+var awal = cookie.indexOf('csrf_cookie_name');
+var akhir = cookie.indexOf(';', awal)
+if (akhir > awal) {
+	pengguna = cookie.substring(awal, akhir)
+}
+else {
+	pengguna = cookie.substring(awal, cookie.length)
+}
+
+				
+				\end{lstlisting}
+				
+				NodeJS sudah menyediakan paket yang memberikan layanan \textit{load balancing} namun mekanisme untuk membagi beban diserahkan kepada pengembang. Paket yang digunakan adalah \texttt{http-proxy}. 
+				
+				Kode program untuk implementasi \textit{balancer} tertera pada Kode Program \ref{implemenBalancer}
 				
 				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Implementasi Algoritma Berbasis Konten pada Balancer},label=implemenBalancer]
 var http = require('http'),
@@ -536,12 +546,11 @@ console.log('proxy listening on port 80');
 				\end{lstlisting}
 		
 		\section{Rincian Implementasi Worker}
-			Untuk melayani setiap permintaan dari pengguna, digunakan Nginx sebagai web server dan MySQL sebagai penyimpanan data dengan sistem operasi Ubuntu Server 14.04.03. \textit{Balancer} tidak menjalankan fungsi sebagai web server karena semua permintaan akan dilayani \textit{worker}. Untuk melakukan installasi kedua aplikasi tersebut digunakan perintah sebagai berikut:
+			Untuk melayani setiap permintaan dari pengguna, digunakan Nginx sebagai web server dengan sistem operasi Ubuntu Server 14.04.03. \textit{Balancer} tidak menjalankan fungsi sebagai web server secara utuh karena semua permintaan akan dilayani \textit{worker}. Untuk melakukan installasi kedua aplikasi tersebut digunakan perintah sebagai berikut:
 			
 			\begin{itemize}
 				\item \texttt{sudo apt-get install nginx}. Perintah ini digunakan untuk instalasi Nginx ke dalam sistem operasi. Untuk dapat melayani halaman dinamis seperti PHP, diperlukan tambahan aplikasi lain yaitu php5-fpm. Untuk menginstalnya dijalankan perintah \texttt{sudo apt-get install php5-fpm}. 
 				\item Berhubungan dengan php5-fpm, karena aplikasi yang akan dijalankan menggunakan kerangka kerja CodeIgniter, dibutuhkan paket lain yang dapat diinstall dengan perintah \texttt{sudo apt-get install php5-fpm php5-cgi php5-cli php5-mysql php5-curl php5-gd php5-idn php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-mhash php5-pspell php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl} (https://bayultimate.wordpress.com/2012/05/08/daftar-paket-php-untuk-nginx/)
-				\item Selanjutnya untuk menginstall MySQL digunakan perintah \texttt{sudo apt-get install mysql-server-5.5}
 			\end{itemize}
 			
 			
@@ -1017,10 +1026,316 @@ key_buffer		= 16M
 				Dari proses perancangan, implementasi dan pengujian terhadap sistem, dapat diambil beberapa kesimpulan berikut:
 				\begin{enumerate}
 					\item Pembagian beban kerja berdasarkan konten permintaan pengguna dilakukan dengan membaca URL yang diakses pengguna. Proses ini terbilang mudah karena sudah banyak paket atau modul yang dapat digunakan untuk membaca permintaan pengguna yang masuk ke dalam server, salah satunya adalah paket http-proxy yang dimiliki NodeJS. Pembagian beban kerja berdasarkan URL sudah teruji pada uji fungsionalitas.
-					\item Pengelompokkan server atau worker berdasarkan konten permintaan pengguna dapat dilakukan manual oleh administrator sistem. NodeJS berperan sebagai balancer yang membaca pengelompokkan yang sudah dimasukkan oleh administrator. Kinerja \textit{worker} berdasarkan pengelompokkan yang ada sudah teruji 
+					\item Pengelompokkan server atau worker berdasarkan konten permintaan pengguna dapat dilakukan manual oleh administrator sistem. NodeJS berperan sebagai balancer yang membaca pengelompokkan yang sudah dimasukkan oleh administrator. Kinerja \textit{worker} berdasarkan pengelompokkan yang ada sudah teruji uji fungsionalitas dan uji performa.
+					\item Akses pada halaman informasi dan halaman daftar memiliki beban yang berbeda. Dengan memfokuskan kinerja setiap \textit{worker} tidak lebih mempercepat respon yang diberikan kepada pengguna. Dari hasil pengujian didapatkan bahwa semakin tinggi angka pengakses, waktu respon juga semakin tinggi. Namun jumlah \textit{worker} yang bekerja pada setiap klaster sangat mempengaruhi keberhasilan sebuah permintaan untuk dilayani.
+					\item Kontrol ketersediaan layanan dapat dilakukan dengan pengecekan berkala pada sistem yang sedang berjalan. Dua langkah yang digunakan adalah mengirim paket ICMP dan meminta paket melalui port 80. 
 				\end{enumerate}
+			
+			\section{Saran}
+				Berikut beberapa saran yang diberikan untuk pengembangan lebih lanjut:
+				\begin{itemize}
+					\item Perlu adanya penelitian lebih lanjut dengan menggunakan komputer yang memiliki spesifikasi lebih baik. 
+				\end{itemize}
+				
+		
+			\begin{thebibliography}{9}
+				\bibitem{paperAlgoritma}
+					Saeed Sharifian, Seyed A. Motamedi, Mohammad K. Akbari b,
+					\textbf{A content-based load balancing algorithm with admission control for cluster web servers},
+					Future Generation Computer Systems,
+					vol. 24, pp. 775-787, 2008
+				
+				\bibitem{webNodeJS}
+					Joyent, Inc,
+					\textbf{About Node.js}, [Online],
+					\url{https://nodejs.org/en/about/},
+					diakses tanggal 01 April 2015
+					
+				\bibitem{useNodeJS}
+					S. Tilkov and S. Vinoski,
+					\textbf{Node.js: Using JavaScript to Build High-Performance Network Programs},
+					IEEE Computer Society Issue,
+					vol. 6, pp. 80-83, 2010
+					
+				\bibitem{clientSideWeb}
+					Jeffrey D. Walker, Steven C. Chapra,
+					\textbf{A client-side web application for interactive environmental simulation modeling},
+					Environmental Modelling \& Software,
+					vol. 55, pp. 49-60, 2014
+				
+				\bibitem{angularJS}
+					Google,
+					\textbf{Angular JS}, [Online],
+					\url{https://angularjs.org/},
+					diakses tanggal 07 April 2015
+				
+				\bibitem{selfDescription}
+					Ming Zhang, Jing Zhang, Wei Zheng, Feiran Hu, Ge Zhuang,
+					\textbf{A self-description data framework for Tokamak control system design},
+					Fusion Engineering and Design,
+					p. 5, 2015
+				
+				\bibitem{mongoDB}
+					MongoDB, Inc,
+					\textbf{MongoDB}, [Online],
+					\url{https://www.mongodb.org/},
+					diakses tanggal 08 April 2015
+					
+				\bibitem{JMeter}
+					Apache Software Foundation,
+					\textbf{Apache JMeter}, [Online],
+					\url{http://jmeter.apache.org/},
+					diakses tanggal 08 April 2015
+				
+				\bibitem{quoraNginx}
+					Quora,
+					\textbf{Why is nginx so efficient?}, [Online],
+					\url{https://www.quora.com/Why-is-nginx-so-efficient},
+					diakses tanggal 03 Januari 2016
+				
+				\bibitem{aosaNginx}
+					AOSABook,
+					\textbf{nginx}, [Online],
+					\url{http://www.aosabook.org/en/nginx.html},
+					diakses tanggal 03 Januari 2016
+			\end{thebibliography}
 
+\renewcommand\chaptername{LAMPIRAN}
 \appendix % Halaman lampiran, dengan judul LAMPIRAN X
+	\chapter{Instalasi Perangkat Lunak}
+		\section{Instalasi Node JS}
+			Ada banyak cara untuk menginstall NodeJS ke dalam komputer, salah satunya melalui kode sumber yang dapat diunduh pada halaman \texttt{https://nodejs.org/en/download/}. Setelah diunduh berkas perlu diekstrak untuk melanjutkan instalasi. Di dalam folder hasil ekstraksi, terdapat berkas \texttt{README.md} yang berisi langkah untuk menginstall NodeJS ke komputer. Semua langkah dilakukan melalui \textit{command line} dan langkah installasinya adalah sebagai berikut
+			
+			\begin{itemize}
+				\item Pindah ke folder dimana Node JS di ekstrak dengan perintah \texttt{cd \{\$pathdownload\}/node-v4.2.3/}.
+				\item Di dalam folder jalankan perintah berikut secara berurutan \texttt{./configure}, \texttt{make}, \texttt{make install}.
+				\item Jika terdapat pesan \textit{error} mengenai beberapa pustaka yang belum terinstall sebelumnya, jalankan perintah \texttt{sudo apt-get install -f}.
+				\item Semua perintah dilakukan pada hak akses \textit{root}.
+			\end{itemize}
+			
+			Untuk memastikan bahwa Node JS sudah berjalan dan siap digunakan, dijalankan perintah dan dihasilkan output seperti pada Gambar \ref{gambarCekNodeJS}.
+			
+			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+				\centering
+				\includegraphics[width=\linewidth]{contoh_img/ceknodejs}
+				\caption{Contoh Node JS Siap Digunakan}
+				\label{gambarCekNodeJS}
+			\end{figure}
+		
+		\section{Installasi MongoDB}
+			MongoDB menyediakan repositori tersendiri untuk mengunduh MongoDB. Setelah terkoneksi dengan repositori yang dimiliki MongoDB, instalasi dapat berlanjut dengan menggunakan perintah \texttt{apt-get}. Berikut ini langkah-langkah instalasi MongoDB.
+			
+			\begin{itemize}
+				\item Tambahkan \textit{public key} yang digunakan untuk manajemen paket pada sistem operasi dengan perintah \texttt{sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10}.
+				\item Buat file repositori untuk MongoDB pada sistem komputer dengan perintah \texttt{echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list}. Perintah ini disesuaikan dengan distro Linux yang digunakan.
+				\item Perbaharui basis data manajemen paket dengan perintah \texttt{sudo apt-get update}.
+				\item Install MongoDB ke komputer dengan perintah \texttt{sudo apt-get install -y mongodb-org}.
+				\item Setelah instalasi selesai jalankan MongoDB dengan perintah \texttt{sudo service mongod start}.
+				\item MongoDB siap digunakan dengan tampilan pada Gambar \ref{gambarCekMongoDB}.
+				\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+					\centering
+					\includegraphics[width=\linewidth]{contoh_img/cekmongodb}
+					\caption{Contoh MongoDB dan Daftar Database}
+					\label{gambarCekMongoDB}
+				\end{figure}
+				
+			\end{itemize}
+	
+	\chapter{Kode Sumber Model Koneksi MongoDB}
+		\section{Aktivitas Model}
+			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Aktivitas Model untuk Koleksi Aktivitas},label=aktivitasModel]	
+var mongoose = require('mongoose');
+
+var aktivitasSchema = new mongoose.Schema({
+	cookie: String,
+	ip: String,
+	aksi: String
+},{
+	collection : 'aktivitas'
+})
+
+var aktivitas = mongoose.model('aktivitas', aktivitasSchema);
+
+exports.aktivitas = aktivitas;
+
+exports.findAktivitas = function(data, callback) {
+	aktivitas.findOne({cookie: data.cookie, aksi: data.aksi}, 'aksi ip', function(err, resultIP){
+		if(err) console.log(err)
+		if(resultIP == null) {
+			callback(err, null)
+		}
+		else {
+			callback(err, resultIP)
+		}
+	})
+}
+
+exports.tambahAktivitas = function(data, callback){
+	aktivitas.create({cookie: data.cookie, ip: data.ip, aksi: data.aksi},function(errr, ress){
+		if (errr) return handleError(errr)
+		callback(errr,ress)
+	})
+}
+			
+			\end{lstlisting}
+
+		\section{ClusterInsert Model}
+			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={ClusterInsert Model untuk Koleksi ClusterInsert},label=clusterInsertModel]	
+var mongoose = require('mongoose');
+
+var clusterInsertSchema = new mongoose.Schema({
+	ip : String,
+	online : Boolean,
+	layani : Number
+},{
+	collection : 'clusterInsert'
+})
+
+var clusterInsert = mongoose.model('clusterInsert', clusterInsertSchema);
+
+exports.clusterInsert = clusterInsert;
+
+exports.findClusterInsert = function(ip, callback) {
+	clusterInsert.findOne({ip: ip}, function(err, resultIP){
+		if(err) console.log(err)
+		if(resultIP == null) {
+			callback(new Error("IP tidak ada"))
+		}
+		else {
+			callback(err, resultIP)
+		}
+	})
+}
+
+exports.findOneClusterInsert = function(callback) {
+	clusterInsert.findOne({'online': 1}, 'ip online layani', {sort:{'layani':1},limit:1}, function(err, resultIP){
+		if(err) console.log(err)
+		if(resultIP == null) {
+			callback(err, null)
+		}
+		else {
+			callback(err, resultIP)
+		}
+	})
+}
+
+exports.updateLayani = function(ip, callback) {
+	clusterInsert.findOneAndUpdate({ip: ip}, {$inc : {layani: 1}}, function(err, result){
+		if (err) return console.log(err)
+		callback(err, "sudah ditambahkan")
+	})
+}
+
+exports.tambahClusterInsert = function(ip, callback){
+	exports.findClusterInsert(ip, function(err, resu){
+		if(resu == null) {
+			var newIP = new clusterInsert({ip: ip, online: 1, layani: 0})
+			newIP.save(function(errr){
+				callback(errr,newIP)
+			})
+		} else {
+			callback(new Error("IP sudah ada"))
+		}
+	})
+}
+
+exports.hapusClusterInsert = function(ip, callback){
+	clusterInsert.findOneAndRemove({ip: ip}, function(err, result){
+		if (err) console.log(err)
+		callback(err, result)
+	})
+}
+			
+			\end{lstlisting}
+		
+		\section{ClusterView Model}
+			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={ClusterView Model untuk Koleksi ClusterView},label=clusterViewModel]	
+var mongoose = require('mongoose');
+
+var clusterViewSchema = new mongoose.Schema({
+	ip : String,
+	online : Boolean,
+	layani : Number
+},{
+	collection : 'clusterView'
+})
+
+var clusterView = mongoose.model('clusterView', clusterViewSchema);
+
+exports.clusterView = clusterView;
+
+exports.findClusterView = function(ip, callback) {
+	clusterView.findOne({ip: ip}, function(err, resultIP){
+		if(err) console.log(err)
+		if(resultIP == null) {
+			callback(new Error("IP tidak ada"))
+		}
+		else {
+			callback(err, resultIP)
+		}
+	})
+}
+
+exports.findOneClusterView = function(callback) {
+	clusterView.findOne({'online': 1}, 'ip online layani', {sort:{'layani':1},limit:1}, function(err, resultIP){
+		if(err) console.log(err)
+		if(resultIP == null) {
+			callback(err, null)
+		}
+		else {
+			callback(err, resultIP)
+		}
+	})
+}
+
+exports.updateLayani = function(ip, callback) {
+	clusterView.findOneAndUpdate({ip: ip}, {$inc : {layani: 1}}, function(err, result){
+		if (err) return console.log(err)
+		callback(err, "sudah ditambahkan")
+	})
+}
+
+exports.tambahClusterView = function(ip, callback){
+	exports.findClusterView(ip, function(err, resu){
+		if(resu == null) {
+			var newIP = new clusterView({ip: ip, online: 1, layani: 0})
+			newIP.save(function(errr){
+				callback(errr,newIP)
+			})
+		} else {
+			callback(new Error("IP sudah ada"))
+		}
+	})
+}
+
+exports.hapusClusterView = function(ip, callback){
+	clusterView.findOneAndRemove({ip: ip}, function(err, result){
+	if (err) console.log(err)
+	callback(err, result)
+	})
+}
+			
+			\end{lstlisting}
+
+		\section{Path Model}
+			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Path Model untuk Koleksi URL},label=pathModel]	
+var mongoose = require('mongoose');
+
+var pathSchema = new mongoose.Schema({
+	path: String,
+	aksi: String
+},{
+	collection : 'path'
+})
+
+var path = mongoose.model('path', pathSchema);
+
+exports.path = path;
+
+
+			
+			\end{lstlisting}	
+		
 
 \backmatter % Lampiran tanpa judul LAMPIRAN X, biasanya untuk BIODATA PENULIS
 \end{document}
