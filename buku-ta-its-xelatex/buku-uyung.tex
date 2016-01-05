@@ -424,270 +424,156 @@ else {
 				
 				\end{lstlisting}
 				
-				NodeJS sudah menyediakan paket yang memberikan layanan \textit{load balancing} namun mekanisme untuk membagi beban diserahkan kepada pengembang. Paket yang digunakan adalah \texttt{http-proxy}. 
+				Ketika pengguna yang masuk tidak memiliki cookie, pengguna akan dilayani oleh \textit{worker} default. \textit{Worker} ini dipilih manual oleh administrator dan dikelola pada halaman admin. Tanpa melihat kategori URL yang diakses, pengguna akan dilayani oleh \textit{worker} default. Kode Program \ref{cookieKosong} menjelaskan \textit{worker} default melayani pengguna dengan cookie kosong. 
 				
-				Kode program untuk implementasi \textit{balancer} tertera pada Kode Program \ref{implemenBalancer}
-				
-				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Implementasi Algoritma Berbasis Konten pada Balancer},label=implemenBalancer]
-var http = require('http'),
-	httpProxy = require('http-proxy'),
-	proxy = httpProxy.createProxyServer({}),
-	url = require('url'),
-	mongoose = require('mongoose');
-
-var clusterview_model = require('./model/clusterview_model')
-var clusterinsert_model = require('./model/clusterinsert_model')
-var aktivitas_model = require('./model/aktivitas_model')
-var path_model = require('./model/path_model')
-
-mongoose.connect('mongodb://127.0.0.1/tugasakhir');
-
-http.createServer(function(req, res) {
-
-	var cookie = req.headers.cookie;
-	var pengguna;
-	if (!cookie) cookie='kosong';
-	var awal = cookie.indexOf('csrf_cookie_name');
-	var akhir = cookie.indexOf(';', awal)
-	if (akhir > awal) {
-		pengguna = cookie.substring(awal, akhir)
-	}
-	else {
-		pengguna = cookie.substring(awal, cookie.length)
-	}
-	
-	var pathname = url.parse(req.url).pathname.split("/");
-	//console.log(cookie);
-	//console.log(cookie);
-	var petugas;
-	//console.log(pathname);
-	
-	
-	if (pathname[1] == '') {pathname[1]='home'}
-	
-	path_model.path.findOne({path: pathname[1]}, 'aksi', function(err, result){
-		if (err) return handleError(err);
-		console.log(result.aksi)
-		if (cookie=='kosong') {
-			petugas='10.151.36.201'
-			console.log(result.aksi)
-			console.log(pathname[1])
-			console.log("petugas : ", petugas);
-			proxy.web(req,res,{target : 'http://'+petugas},function(ee,aa){
-				console.log("ini error juga", ee)
-			});
-		}
-		else {
-			var cari = {cookie: pengguna, aksi: result.aksi}
-			aktivitas_model.findAktivitas(cari, function(erro, resu){				
-				if (erro) return console.log("kesalahan")
-				if (!resu) {
-					//dapatkan server yang dapat digunakan
-					if (result.aksi == 'view') {
-						clusterview_model.findOneClusterView(function(salah, hasil){
-							if (salah) return console.log(salah)
-							petugas = hasil.ip;
-							clusterview_model.updateLayani(hasil.ip, function(wa, we){
-								if (wa) return console.log(wa)
-								console.log(we);
-							})
-							console.log(result.aksi)
-							console.log(pathname[1])
-							console.log("petugas : ", petugas);
-							//tambah pengguna baru ke dalam basis data
-							var kumpul = {cookie: pengguna, ip: petugas, aksi: result.aksi}
-							aktivitas_model.tambahAktivitas(kumpul,function(errr, ress){
-								if (errr) return handleError(errr)
-								proxy.web(req, res, {target : 'http://'+petugas},function(ee,aa){
-									if(ee) console.log(ee)
-								});
-							})
-						})
-					}
-					else {
-						clusterinsert_model.findOneClusterInsert(function(salah, hasil){
-							if (salah) return console.log(salah)
-							petugas = hasil.ip;
-							clusterinsert_model.updateLayani(hasil.ip, function(wa, we){
-								if (wa) return console.log(wa)
-								console.log(we);
-							})
-							console.log(result.aksi)
-							console.log(pathname[1])
-							console.log("petugas : ", petugas);
-							//tambah pengguna baru ke dalam basis data
-							var kumpul = {cookie: pengguna, ip: petugas, aksi: result.aksi}
-							aktivitas_model.tambahAktivitas(kumpul,function(errr, ress){
-								if (errr) return handleError(errr)
-								proxy.web(req, res, {target : 'http://'+petugas}, function(ee,aa){
-									if(ee) console.log(ee)
-								});
-							})
-						})
-					}
-				}
-				else {
-					console.log(result.aksi)
-					console.log(pathname[1])
-					console.log("petugas : ", resu.ip)
-					proxy.web(req, res, {target : 'http://'+resu.ip}, function(ee, aa){
-						if(ee) console.log("di sini error", ee)
-					})
-				}
-			});
-		}
-	});
-	
-}).listen(80, function() {
-console.log('proxy listening on port 80');
-});
-				
+				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Worker Default Melayani Cookie Kosong},label=cookieKosong]
+if (cookie=='kosong') {
+	setting_model.setting.findOne({setting:"default"}, 'pakehuruf', function(error, resul){
+		if (error) console.log(error)				
+		petugas = resul.pakehuruf
+		proxy.web(req,res,{target : 'http://'+petugas},function(ee,aa){
+			console.log("ini error juga", ee)
+		});
+	})
+}
 				
 				\end{lstlisting}
+				
+				Dalam Kode Program \ref{cookieKosong} muncul perintah \texttt{proxy.web()}. Fungsi ini adalah fungsi bawaan dari paket \texttt{http-proxy} yang akan menjalankan sistem proxy dimana permintaan pengguna dikirimkan ke komputer target, dalam kasus ini komputer target adalah \textit{worker}. Fungsi ini akan digunakan setiap kali pengguna masuk dan dilayani \textit{worker}.
+				
+				Jika pengguna yang masuk memiliki cookie, cookie dan URL yang diakses pengguna akan dicek pada koleksi \texttt{aksi}. Jika ditemukan, \textit{worker} yang melayani sesuai dengan yang ada pada data dari MongoDB. Namun ketika tidak ditemukan data, balancer akan memilihkan \textit{worker} aktif dan yang siap melayani sesuai dengan kategori URL yang diakses. Pada Kode Program \ref{getWorker} tertera mekanisme untuk mendapatkan \textit{worker} aktif.
+				
+				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Mekanisme Pencarian Worker Aktif},label=getWorker]
+if (result.aksi == 'view') {
+	clusterview_model.findOneClusterView(function(salah, hasil){
+		if (salah) return console.log(salah)
+		petugas = hasil.ip;
+		clusterview_model.updateLayani(hasil.ip, function(wa, we){
+			if (wa) return console.log(wa)
+			console.log(we);
+		})
+		console.log(result.aksi)
+		console.log(pathname[1])
+		console.log("petugas : ", petugas);
+		//tambah pengguna baru ke dalam basis data
+		var kumpul = {cookie: pengguna, ip: petugas, aksi: result.aksi}
+		aktivitas_model.tambahAktivitas(kumpul,function(errr, ress){
+			if (errr) return handleError(errr)
+			proxy.web(req, res, {target : 'http://'+petugas},function(ee,aa){
+				if(ee) console.log(ee)
+			});
+		})
+	})
+}
+				
+				\end{lstlisting}
+				
+				Kode Program \ref{getWorker} adalah contoh pada klaster view. Mekanisme tersebut juga dilakukan pada klaster insert untuk mendapatkan \textit{worker}. Setelah mendapatkan \textit{worker}, pasangan \textit{worker}, cookie, dan kategori URL akan ditambahkan pada koleksi aksi yang nantinya akan digunakan pada iterasi selanjutnya ketika ada pengguna masuk ke dalam sistem.
+				
+				
 		
 		\section{Rincian Implementasi Worker}
 			Untuk melayani setiap permintaan dari pengguna, digunakan Nginx sebagai web server dengan sistem operasi Ubuntu Server 14.04.03. \textit{Balancer} tidak menjalankan fungsi sebagai web server secara utuh karena semua permintaan akan dilayani \textit{worker}. Untuk melakukan installasi kedua aplikasi tersebut digunakan perintah sebagai berikut:
 			
 			\begin{itemize}
 				\item \texttt{sudo apt-get install nginx}. Perintah ini digunakan untuk instalasi Nginx ke dalam sistem operasi. Untuk dapat melayani halaman dinamis seperti PHP, diperlukan tambahan aplikasi lain yaitu php5-fpm. Untuk menginstalnya dijalankan perintah \texttt{sudo apt-get install php5-fpm}. 
-				\item Berhubungan dengan php5-fpm, karena aplikasi yang akan dijalankan menggunakan kerangka kerja CodeIgniter, dibutuhkan paket lain yang dapat diinstall dengan perintah \texttt{sudo apt-get install php5-fpm php5-cgi php5-cli php5-mysql php5-curl php5-gd php5-idn php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-mhash php5-pspell php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl} (https://bayultimate.wordpress.com/2012/05/08/daftar-paket-php-untuk-nginx/)
+				\item Berhubungan dengan php5-fpm, karena aplikasi yang akan dijalankan menggunakan kerangka kerja CodeIgniter, dibutuhkan paket lain yang dapat diinstall dengan perintah \texttt{sudo apt-get install php5-fpm php5-cgi php5-cli php5-mysql php5-curl php5-gd php5-idn php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-mhash php5-pspell php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl} (\url{https://bayultimate.wordpress.com/2012/05/08/daftar-paket-php-untuk-nginx/})
 			\end{itemize}
 			
 			
 		
 		\section{Rincian Implementasi Server Basis Data}
-			Hanya ada satu aplikasi yang berjalan yaitu MySQL yang memberikan servis basis data kepada \textit{worker}. Konfigurasi lanjut dibutuhkan agar setiap \textit{worker} dapat menggunakan basis data yang ada. Salah satunya adalah alamat IP yang digunakan server harus dikenali lingkungan implementasi, dalam hal ini lingkungan di Laboratorium AJK. Selain alamat IP, konfigurasi lain yang dapat meningkatkan koneksi ke basis data juga diatur, dalam kasus ini variabel \texttt{max\_connections} dapat diperbesar nilainya untuk mendapatkan koneksi yang lebih banyak. Konfigurasi lengkap basis data tertera pada Kode Sumber \ref{implemenDB}
+			Hanya ada satu aplikasi yang berjalan yaitu MySQL yang memberikan servis basis data kepada \textit{worker}. Konfigurasi lanjut dibutuhkan agar setiap \textit{worker} dapat menggunakan basis data yang ada. Salah satunya adalah alamat IP yang digunakan server harus dikenali lingkungan implementasi, dalam hal ini lingkungan di Laboratorium AJK. Konfigurasi basis data agar berjalan dengan menggunakan IP tertera pada Kode Sumber \ref{alamatDB}
+			
+			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Konfigurasi MySQL pada Alamat IP AJK},label=alamatDB]
+			
+bind-address		= 10.151.36.205
+			
+			\end{lstlisting}
+			
+			\textit{Worker} harus diberi akses ke basis data dengan menggunakan user yang ditentukan. Pada Tugas Akhir ini karena tidak dibutuhkan keamanan yang tinggi maka perintah untuk menambahkan akses diberikan untuk semua alamat yang akan mengakses basis data. Perintah yang dijalankan ada pada baris perintah MySQL, sehingga perlu masuk ke MySQL sebagai user root atau user lain yang memiliki hak akses untuk menambahkan pengguna ke dalam basis data. Berikut adalah urutan perintah untuk menambahkan akses.
+			
+			\begin{itemize}
+				\item CREATE USER 'input'@'\%' IDENTIFIED BY 'a';. Perintah ini akan menambahkan pengguna \texttt{input} dari semua alamat dengan password \texttt{a}.
+				\item GRANT ALL PRIVILEGES ON ppdb.* TO 'input'@'\%';. Perintah ini akan memberikan akses pengguna \texttt{input} ke semua tabel yang ada di basis data \texttt{ppdb}.
+			\end{itemize}
+			\ \\
+			
+			Konfigurasi lain yang dapat meningkatkan koneksi ke basis data juga diatur, dalam kasus ini variabel \texttt{max\_connections} dapat diperbesar nilainya untuk mendapatkan koneksi yang lebih banyak. Konfigurasi yang diubah untuk mendapatkan hasil yang maksimal pada basis data tertera pada Kode Sumber \ref{implemenDB}
 		    
 		    \begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Konfigurasi MySQL untuk Server Basis Data},label=implemenDB]
-#
-# The MySQL database server configuration file.
-#
-# You can copy this to one of:
-# - "/etc/mysql/my.cnf" to set global options,
-# - "~/.my.cnf" to set user-specific options.
-# 
-# One can use all long options that the program supports.
-# Run program with --help to get a list of available options and with
-# --print-defaults to see which it would actually understand and use.
-#
-# For explanations see
-# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
-
-# This will be passed to all mysql clients
-# It has been reported that passwords should be enclosed with ticks/quotes
-# escpecially if they contain "#" chars...
-# Remember to edit /etc/mysql/debian.cnf when changing the socket location.
-[client]
-port		= 3306
-socket		= /var/run/mysqld/mysqld.sock
-
-# Here is entries for some specific programs
-# The following values assume you have at least 32M ram
-
-# This was formally known as [safe_mysqld]. Both versions are currently parsed.
-[mysqld_safe]
-socket		= /var/run/mysqld/mysqld.sock
-nice		= 0
-
-[mysqld]
-#
-# * Basic Settings
-#
-user		= mysql
-pid-file	= /var/run/mysqld/mysqld.pid
-socket		= /var/run/mysqld/mysqld.sock
-port		= 3306
-basedir		= /usr
-datadir		= /var/lib/mysql
-tmpdir		= /tmp
-lc-messages-dir	= /usr/share/mysql
-skip-external-locking
-#
-# Instead of skip-networking the default is now to listen only on
-# localhost which is more compatible and is not less secure.
-bind-address		= 10.151.36.205
-#
-# * Fine Tuning
-#
-key_buffer		= 64M
-max_allowed_packet	= 16M
-thread_stack		= 192K
-thread_cache_size       = 8
-# This replaces the startup script and checks MyISAM tables if needed
-# the first time they are touched
-myisam-recover         = BACKUP
-max_connections        = 1024
-#table_cache            = 64
-#thread_concurrency     = 10
-#
-# * Query Cache Configuration
-#
-query_cache_limit	= 10M
-query_cache_size        = 64M
-#
-# * Logging and Replication
-#
-# Both location gets rotated by the cronjob.
-# Be aware that this log type is a performance killer.
-# As of 5.1 you can enable the log at runtime!
-#general_log_file        = /var/log/mysql/mysql.log
-#general_log             = 1
-#
-# Error logging goes to syslog due to /etc/mysql/conf.d/mysqld_safe_syslog.cnf.
-#
-# Here you can see queries with especially long duration
-#log_slow_queries	= /var/log/mysql/mysql-slow.log
-#long_query_time = 2
-#log-queries-not-using-indexes
-#
-# The following can be used as easy to replay backup logs or for replication.
-# note: if you are setting up a replication slave, see README.Debian about
-#       other settings you may need to change.
-#server-id		= 1
-#log_bin			= /var/log/mysql/mysql-bin.log
-expire_logs_days	= 10
-max_binlog_size         = 100M
-#binlog_do_db		= include_database_name
-#binlog_ignore_db	= include_database_name
-#
-# * InnoDB
-#
-# InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.
-# Read the manual for more InnoDB related options. There are many!
-#
-# * Security Features
-#
-# Read the manual, too, if you want chroot!
-# chroot = /var/lib/mysql/
-#
-# For generating SSL certificates I recommend the OpenSSL GUI "tinyca".
-#
-# ssl-ca=/etc/mysql/cacert.pem
-# ssl-cert=/etc/mysql/server-cert.pem
-# ssl-key=/etc/mysql/server-key.pem
-
-
-
-[mysqldump]
-quick
-quote-names
-max_allowed_packet	= 16M
-
-[mysql]
-#no-auto-rehash	# faster start of mysql but no tab completition
-
-[isamchk]
-key_buffer		= 16M
-
-#
-# * IMPORTANT: Additional settings that can override those from this file!
-#   The files must end with '.cnf', otherwise they'll be ignored.
-#
-!includedir /etc/mysql/conf.d/
+key_buffer			= 64M
+max_allowed_packet			= 16M
+max_connections			= 1024
+query_cache_size			= 64M
 		    
 		    \end{lstlisting}
 		
 		\section{Implementasi Halaman Admin}
+			Implementasi Halaman Admin dibagi sesuai dengan rute yang dijelaskan pada Tabel \ref{tabelRuteHalamanAdmin}. Untuk setiap rute dibuat dalam pengendali / \textit{controller} terpisah.
+			
+			\subsection{Pengendali /}
+				Pengendali ini berfungsi untuk aktivasi fungsi \textit{balancer} dan memberikan nilai untuk dua pengaturan utama pada fungsi \textit{balancer}. Dua pengaturan ini adalah \textit{worker} default yang akan digunakan \textit{balancer} ketika permintaan yang masuk tidak memiliki \textit{cookie} dan waktu yang digunakan \textit{balancer} untuk melakukan pengecekan anggota klaster yang digunakan.
+				
+				Tidak ada rute tambahan untuk pengedali ini karena semua tombol yang akan dieksekusi dengan menggunakan pustaka Angular JS. Setiap aksi terhadap tombol akan diterima Angular JS dan diolah kemudian elemen yang bersangkutan akan diganti sesuai dengan data yang baru saja disimpan, dihapus, maupun disunting. Adapun tombol yang ada pada pengendali ini tertera pada Tabel \ref{tabelPengendaliHome}.
+				
+				\begin{longtable}{|p{0.05\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+					
+					% Kepala tabel, berulang di setiap halaman
+					\caption{Daftar Tombol pada Pengendali /} \label{tabelPengendaliHome} \\
+					\hline
+					\textbf{No} & \textbf{Tombol} & \textbf{Masukan} & \textbf{Luaran} & \textbf{Keterangan} \\ \hline
+					
+					\endhead
+					\endfoot
+					\endlastfoot
+					
+					% Isi Tabel
+					1 & AKTIFKAN & - & Boolean(1) & Status aktif dan tidaknya balancer\\ \hline
+					2 & Ubah IP Default & \texttt{alamat IP} & String & IP worker default yang digunakan balancer \\ \hline
+					3 & Ubah Waktu Cek & \texttt{waktu} & String & Waktu untuk cek worker \\ \hline
+					
+				\end{longtable}
+			
+			\subsection{Pengendali /cluster}
+				Pengendali ini berfungsi untuk mendaftar worker aktif dan tidak aktif di dalam klaster. Terdapat dua klaster yaitu klaster view dan klaster insert. Penjelasan implementasi pengendali terdapat pada Tabel \ref{tabelPengendaliCluster}.
+				
+				\begin{longtable}{|p{0.05\textwidth}|p{0.15\textwidth}|p{0.2\textwidth}|p{0.15\textwidth}|p{0.25\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+					
+					% Kepala tabel, berulang di setiap halaman
+					\caption{Implementasi Pengendali /cluster} \label{tabelPengendaliCluster} \\
+					\hline
+					\textbf{No} & \textbf{Rute} & \textbf{Masukan} & \textbf{Luaran} & \textbf{Proses} \\ \hline
+					
+					\endhead
+					\endfoot
+					\endlastfoot
+					
+					% Isi Tabel
+					1 & GET / & - & Daftar worker &  Daftar worker ditampilkan pada tabel, dipisahkan berdasarkan klaster\\ \hline
+					2 & POST / & \texttt{alamat IP} & Daftar worker & Worker baru ditambahkan sesuai klaster. Daftar worker di update. \\ \hline				
+					
+				\end{longtable}
+			
+			\subsection{Pengendali /path}
+				Pengendali ini berfungsi untuk mendaftar URL dan kategorinya. Dua kategori sesuai dengan dua klaster yang ada pada pengendali /cluster. Penjelasan implementasi pengendali /path tertera pada Tabel \ref{tabelPengendaliPath}.
+				
+				\begin{longtable}{|p{0.05\textwidth}|p{0.15\textwidth}|p{0.2\textwidth}|p{0.15\textwidth}|p{0.25\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+					
+					% Kepala tabel, berulang di setiap halaman
+					\caption{Implementasi Pengendali /path} \label{tabelPengendaliPath} \\
+					\hline
+					\textbf{No} & \textbf{Rute} & \textbf{Masukan} & \textbf{Luaran} & \textbf{Proses} \\ \hline
+					
+					\endhead
+					\endfoot
+					\endlastfoot
+					
+					% Isi Tabel
+					1 & GET / & - & Daftar URL &  Daftar URL dan kategori ditampilkan dalam tabel \\ \hline
+					2 & POST / & \texttt{URL}, \texttt{Kategori} & Daftar URL & URL baru ditambahkan, daftar URL diperbarui \\ \hline				
+					
+				\end{longtable}
 	
 	\chapter{Pengujian dan Evaluasi}
 		\section{Lingkungan Uji Coba}
