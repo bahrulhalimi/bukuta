@@ -1,8 +1,11 @@
 \documentclass{ta-its}
 \usepackage{hyperref} % Hyperlink pada dokumen
 \usepackage{listings} % Kode sumber
+\usepackage[verbose]{wrapfig}
+\usepackage{etoolbox}
 
 \renewcommand{\lstlistingname}{Kode Sumber}
+\renewcommand{\lstlistlistingname}{DAFTAR KODE SUMBER}
 
 
 % \title{Judul Bahasa Indonesia}{Judul Bahasa Inggris}
@@ -14,7 +17,7 @@
 % \supervisorOne{Nama Pembimbing Satu}{NIP}
 % \supervisorTwo{Nama Pembimbing Dua}{NIP}
 \supervisorOne{Royyana Muslim Ijtihadie, S.Kom, M.Kom, PhD}{197708242006041001}
-\supervisorTwo{Baskoro Adi P, S.Kom, M.Kom}{197708242006041001}
+\supervisorTwo{Baskoro Adi P, S.Kom, M.Kom}{198702182014041001}
 
 % \degree{Nama Gelar}{Bidang Studi}{Program Studi}{Jurusan}{Jurusan (English)}{Fakultas}{Fakultas Singkatan}{Fakultas (English)}
 \degree{Sarjana Komputer}{Arsitektur dan Jaringan Komputer}{S1}{Teknik Informatika}{Informatics}{Teknologi Informasi}{FTIf}{Information Technology}
@@ -27,30 +30,56 @@
     \maketitle
     \legalityPaper % Lembar Pengesahan
     \begin{abstrak}
-    	Dokumen ini merupakan dokumen contoh penggunaan templat \LaTeX{} untuk pembuatan Buku Tugas Akhir ITS. \\
+    	Aplikasi berbasis web semakin diminati untuk berbagai proses bisnis yang ada di lingkungan kita. Salah satu yang menjadi sorotan adalah penerimaan peserta didik baru yang dilaksanakan secara \textit{online}. Dengan adanya aplikasi ini pengguna akan dihadapkan pada dua jenis halaman yaitu halaman pengisian informasi untuk daftar dan halaman untuk menampilkan informasi. Tentu dengan pengaturan yang biasa, server akan melayani dua jenis halaman ini secara bersamaan. Kondisi ini akan mengakibatkan \textit{bottle neck} atau penumpukan permintaan. \\
+	    Muncul gagasan untuk membagi beban kerja ke komputer lain agar setiap permintaan yang masuk dapat dilayani. Gagasan ini sudah biasa dilakukan dengan menggunakan Nginx sebagai balancer. Namun dengan beragamnya tipe permintaan pengguna, waktu yang dibutuhkan untuk melayani menjadi tidak stabil. \\
+	    Gagasan lain muncul dengan adanya pembagian beban kerja berdasarkan konten yang diakses pengguna. Konten ini dapat diartikan sebagai dua jenis halaman sebelumnya. NodeJS akan bekerja sebagai balancer dan membaca setiap permintaan pengguna dan mengarahkan permintaan kepada \textit{worker} yang sesuai untuk setiap URL yang diakses pengguna. Dibantu dengan MongoDB sebagai basis data, NodeJS akan bekerja lebih konsisten terhadap data masuk ke sistem. \\
+	    Hasil menunjukkan dengan NodeJS dan prioritas berbasis konten, waktu respon meningkat seiring dengan bertambahnya permintaan yang masuk. Namun dengan terfokusnya kerja \textit{worker} untuk melayani satu jenis halaman, membuat setiap permintaan dapat terlayani hingga permintaan selesai. \\
     	
-    	\noindent \textbf{Kata-Kunci}: \LaTeX{}, templat, Tugas Akhir, ITS.
+    	\noindent \textbf{Kata-Kunci}: Load Balance, Prioritas Berbasis Konten, NodeJS, MongoDB.
 	\end{abstrak}
+	
+	\cleardoublepage
    \begin{abstract}
-    	Dokumen ini merupakan dokumen contoh penggunaan templat \LaTeX{} untuk pembuatan Buku Tugas Akhir ITS. \\
+	   	Web-based application become viral in our living society nowadays. One of those application is an on line application for ppdb. \\
     	
-    	\noindent \textbf{Kata-Kunci}: \LaTeX{}, templat, Tugas Akhir, ITS.
+    	
+    	\noindent \textbf{Kata-Kunci}: Load Balance, Content Based Priority, NodeJS, MongoDB.
 	\end{abstract}
+	
     \chapter{Kata Pengantar}
-        \textbf{Om Swastyastu}
+	    \begin{figure}[h]
+	    	\centering
+	    	\includegraphics[width=0.5\linewidth]{contoh_img/gambarBismillah}
+	    \end{figure}
 
-        Puji syukur penulis haturkan kepada Ida Sang Hyang Widhi Wasa, Tuhan Yang Maha Esa karena atas \emph{asungkertha wara nugraha} beliau, penulis dapat menyelesaikan sebuah dokumentasi cara pembuatan Buku Tugas Akhir Sarjana menggunakan \LaTeX{} untuk Institut Teknologi Sepuluh Nopember, Surabaya. Dokumentasi ini diharapkan dapat membantu rekan-rekan mahasiswa S1 yang menempuh semester terakhir dengan membuat buku Tugas Akhir menggunaan sistem \emph{typesetting} \LaTeX{} yang terbukti handal dan lumrah digunakan di bidang penelitian sains dan teknik. Dokumentasi ini dibuat menggunakan templat yang penulis buat sendiri (pada berkas \texttt{ta-its.cls}) sehingga nantinya bisa digunakan kembali sehingga pembuatan buku bisa lebih dipermudah.
-
-        Penulis menerima kritik dan saran mengenai pengembangan templat ini agar bisa menjadi lebih baik dan bisa menjadi standar \emph{de-facto} dan \emph{de-jure} dalam penulisan buku TA di seluruh civitas akademika ITS. Penulis dapat dihubungi melalui surel: \texttt{initrunlevel0@gmail.com}.
-
-        Sekian dan Terima Kasih.
-        \noindent \textbf{Om Santhi Santhi Santhi Om}
+        Alhamdulillahirabbil’alamin, segala puji bagi Allah SWT, yang telah melimpahkan rahmat dan hidayah-Nya sehingga penulis dapat menyelesaikan Tugas Akhir yang berjudul \textbf{RANCANG BANGUN SISTEM PENYEIMBANG BEBAN PADA KLASTER SERVER DENGAN PRIORITAS BERBASIS KONTEN DAN KONTROL KETERSEDIAAN LAYANAN}. Pengerjaan Tugas Akhir ini merupakan suatu kesempatan yang sangat baik bagi penulis. Dengan pengerjaan Tugas Akhir ini, penulis bisa belajar lebih banyak untuk memperdalam dan meningkatkan apa yang telah didapatkan penulis selama menempuh perkuliahan di Teknik Informatika ITS. Dengan Tugas Akhir ini penulis juga dapat menghasilkan suatu implementasi dari apa yang telah penulis pelajari.
+        Selesainya Tugas Akhir ini tidak lepas dari bantuan dan dukungan beberapa pihak. Sehingga pada kesempatan ini penulis mengucapkan syukur dan terima kasih kepada:
+        \begin{enumerate}
+        	\item Allah SWT atas anugerahnya yang tidak terkira kepada penulis dan Nabi Muhammad SAW.
+        	\item Bapak, Ibu, Mbak Nova yang telah memberikan dukungan moral dan material serta doa yang tak terhingga untuk penulis. Serta selalu memberi semangat dan dorongan untuk segera menyelesaikan pengerjaan Tugas Akhir ini.
+        	\item Bapak Royyana Muslim Ijtihadie, S.Kom, M.Kom, Ph.D. selaku pembimbing I yang telah membantu, membimbing, dan memotivasi penulis mulai dari pengerjaan proposal hingga terselesaikannya Tugas Akhir ini.
+        	\item Bapak Baskoro Adi P, S.Kom, M.Kom selaku pembimbing II yang juga telah membantu, membimbing, dan memotivasi penulis mulai dari pengerjaan proposal hingga terselesaikannya Tugas Akhir ini.
+        	\item Ibu Dr. Eng. Nanik Suciati, S.Kom., M.Kom., selaku Kepala Jurusan Teknik Informatika ITS pada masa pengerjaan Tugas Akhir, Bapak Darlis Herumurti, S.Kom., M.Kom., selaku Kepala Jurusan Teknik Informatika ITS saat ini, Bapak Radityo Anggoro, S.Kom., M.Sc., selaku koordinator TA, dan segenap dosen Teknik Informatika yang telah memberikan ilmu dan pengalamannya.
+        	\item Teman-teman Laboratorium AJK, samihd, romen, vivi, harum, dimas, thiar, agus, surya, pur, eva, nisa, uul, wicak, zaza, daniel, nindy, rizma, asbun, oing, fatih, syukron yang selalu menghibur dan mendukung penulis dalam pengerjaan Tugas Akhir ini.
+        	\item Yang selalu memberikan semangat, memasakkan makanan ketika penulis sakit, memarahi ketika penulis lupa dengan Tugas Akhir, dan memberikan hiburan ketika penulis terhenti pada pengerjaan Tugas Akhir.
+        	\item Teman-teman Kidnapper PARESMAPA angkatan 21 yang selalu mendukung penulis untuk tidak segera lulus.
+        	\item Teman-teman di Dinas Pendidikan Kota Surabaya yang memberikan semangat untuk segera menyelesaikan Tugas Akhir.
+        	\item Serta semua pihak yang telah turut membantu penulis dalam menyelesaikan Tugas Akhir ini.
+        \end{enumerate}
+        
+        Penulis menyadari bahwa Tugas Akhir ini masih memiliki banyak kekurangan. Sehingga dengan kerendahan hati, penulis mengharapkan kritik dan saran dari pembaca untuk perbaikan ke depannya.
+        
+        \hfill Surabaya, Desember 2015 \\ \\
+        
+        
+        \hfill Bahrul Halimi
 
         \cleardoublepage % Mengisi penanda halaman genap yang kosong
 
     \tableofcontents % Daftar isi
     \listoftables % Daftar tabel
     \listoffigures % Daftar figur/gambar
+    \lstlistoflistings % Daftar kode sumber
 
 \mainmatter % Halaman utama, dengan judul BAB X, nomor halaman penomoran arab
     \chapter{PENDAHULUAN}
@@ -183,8 +212,8 @@
 		    	% Isi Tabel
 		    	UC-0001 & Melayani permintaan halaman web & Setiap permintaan halaman web akan mengarah ke sistem dan \textit{balancer} akan melayani dengan cara meneruskan permintaan ke \textit{worker} dan mengeruskan balasan ke pengguna \\ \hline
 		    	UC-0002 & Membagi beban kerja berdasarkan URL yang diakses pengguna & Dibelakang sistem terdapat beberapa \textit{worker} yang bekerja melayani permintaan terusan dari sistem, di sini lah \textit{balancer} membagi beban kerja tersebut \\ \hline
-		    	UC-0003 & Mengeluarkan \textit{worker} dari \textit{cluster} ketika tidak dapat melayani & Jika terdapat \textit{worker} yang tidak dapat melayani permintaan, \textit{balancer} akan mengeluarkan sementara dari tugas melayani hingga \textit{worker} mampu memberikan layanan \\ \hline
-		    	UC-0004 & Mengelola \textit{worker} di dalam \textit{cluster} & Admin dapat menambahkan dan mengurangi \textit{worker} di dalam daftar \textit{cluster} \\ \hline
+		    	UC-0003 & Mengeluarkan \textit{worker} dari klaster ketika tidak dapat melayani & Jika terdapat \textit{worker} yang tidak dapat melayani permintaan, \textit{balancer} akan mengeluarkan sementara dari tugas melayani hingga \textit{worker} mampu memberikan layanan \\ \hline
+		    	UC-0004 & Mengelola \textit{worker} di dalam klaster & Admin dapat menambahkan dan mengurangi \textit{worker} di dalam daftar klaster \\ \hline
 		    	UC-0005 & Mengelola URL yang diakses pengguna & Admin dapat menambahkan dan mengurangi daftar URL ke dalam sistem \\ \hline
 		    	UC-0006 & Mengaktifkan dan mematikan sistem & Admin memiliki kendali atas aktif dan tidaknya sistem \\ \hline
 		    	
@@ -203,9 +232,9 @@
 			    	\label{gambarSistem}
 			    \end{figure}
 			    
-			    Load balancer memiliki daftar worker dan URL yang akan digunakan dalam operasional load balancing. Daftar ini disimpan dalam MongoDB agar daftar yang dimiliki konsiste. MongoDB menyimpan data dalam bentuk JSON sehingga koneksi untuk mendapatkan daftar ini cepat.
+			    Load balancer memiliki daftar \textit{worker} dan URL yang akan digunakan dalam operasional load balancing. Daftar ini disimpan dalam MongoDB agar daftar yang dimiliki konsiste. MongoDB menyimpan data dalam bentuk JSON sehingga koneksi untuk mendapatkan daftar ini cepat.
 			    
-			    Untuk memudahkan administrator sistem dalam mengkonfigurasikan worker dan menambahkan daftar URL yang ada, disediakan sebuah halaman admin yang berjalan pada port 3000. Selain dengan halaman admin ini, administrator sistem sudah dibantu untuk mengeluarkan worker yang tidak aktif dari pekerjaannya dalam proses load balancing oleh sistem secara otomatis dalam rentang waktu tertentu.
+			    Untuk memudahkan administrator sistem dalam mengkonfigurasikan \textit{worker} dan menambahkan daftar URL yang ada, disediakan sebuah halaman admin yang berjalan pada port 3000. Selain dengan halaman admin ini, administrator sistem sudah dibantu untuk mengeluarkan \textit{worker} yang tidak aktif dari pekerjaannya dalam proses load balancing oleh sistem secara otomatis dalam rentang waktu tertentu.
 			    
 			    
 			    
@@ -220,7 +249,7 @@
 			    	\label{gambarArsitekturBalancer}
 			    \end{figure}
 			    
-			    NodeJS akan menyediakan servis web yang akan menangkap setiap permintaan pengguna. Sebelum diteruskan ke \textit{worker}, \textit{balancer} akan membaca data tentang \textit{cluster} di dalam MongoDB. Data di dalam database berupa \textit{worker} yang siap melayani permintaan berdasarkan URL yang ada. Setelah \textit{balancer} mendapatkan satu \textit{worker} yang siap, permintaan diteruskan untuk mendapatkan balasan yang sesuai. Setelah mendapatkan balasan dari worker, balasan dikembalisan ke pengguna.
+			    NodeJS akan menyediakan servis web yang akan menangkap setiap permintaan pengguna. Sebelum diteruskan ke \textit{worker}, \textit{balancer} akan membaca data tentang klaster di dalam MongoDB. Data di dalam database berupa \textit{worker} yang siap melayani permintaan berdasarkan URL yang ada. Setelah \textit{balancer} mendapatkan satu \textit{worker} yang siap, permintaan diteruskan untuk mendapatkan balasan yang sesuai. Setelah mendapatkan balasan dari \textit{worker}, balasan dikembalisan ke pengguna.
 			    
 			    Setiap aktivitas yang terjadi di \textit{balancer} akan dicatat dan disimpan pada MongoDB. Semua data yang dibutuhkan \textit{balancer} tersimpan pada MongoDB dan disajikan pada halaman admin.
 			    			    
@@ -232,7 +261,7 @@
 			    \end{figure}
 			
 			\subsection{Desain Worker}
-				Worker bekerja sebagai pemberi layanan. Menunggu permintaan yang diteruskan dari balancer dan mengembalikan lagi ke balancer. Aplikasi berbasis web yang akan diakses pengguna dijalankan pada worker. Diagram arsitektur worker tertera pada Gambar \ref{gambarArsitekturWorker}
+				Worker bekerja sebagai pemberi layanan. Menunggu permintaan yang diteruskan dari balancer dan mengembalikan lagi ke balancer. Aplikasi berbasis web yang akan diakses pengguna dijalankan pada \textit{worker}. Diagram arsitektur \textit{worker} tertera pada Gambar \ref{gambarArsitekturWorker}
 				
 				\begin{figure}[] % h = pasti berada di bawah teks yang ada di atas
 					\centering
@@ -268,8 +297,8 @@
 					
 					% Isi Tabel
 					1 & / & GET, POST & Menampilkan status balancer dan operasi mengaktifkan/mematikan \textit{balancer}\\ \hline
-					2 & /cluster & GET, POST & Mengelola \textit{worker} di dalam \textit{cluster} \\ \hline
-					3 & /path & GET, POST & Mengelola rute pada aplikasi sesuai dengan \textit{cluster} \\ \hline
+					2 & /cluster & GET, POST & Mengelola \textit{worker} di dalam klaster \\ \hline
+					3 & /path & GET, POST & Mengelola rute pada aplikasi sesuai dengan klaster \\ \hline
 
 				\end{longtable}
 				
@@ -376,12 +405,13 @@
 		        	\item clusterinsert\_model, digunakan untuk mencatat daftar \textit{worker} di dalam \textit{cluster insert}.
 		        	\item clusterview\_model, digunakan untuk mencatat daftar \textit{worker} di dalam \textit{cluster view}.
 		        	\item path\_model, digunakan untuk mencatat daftar URL dan digolongkan ke dalam dua jenis, yaitu insert dan view.
+		        	\item setting\_model, digunakan untuk mencatat konfigurasi \textit{balancer} terkait \textit{worker} default dan waktu untuk melakukan pengecekan terhadap \textit{worker} yang tidak aktif.
 		        \end{itemize}
 		        
 		        Kode program untuk setiap model tertera pada lampiran.
 			
 			\subsection{Implementasi Balancer}
-				Mekanisme prioritas berbasis konten diterapkan untuk menjalankan balancer. Mekanisme ini hanya akan memilih \textit{worker} sesuai dengan \textit{cluster} yang aktif dan siap melayani permintaan. Daftar \textit{worker} yang dapat digunakan didapatkan dari basis data yang diakses dengan menggunakan model yang sudah di bahas pada sub-bab sebelumnya. Selanjutnya setiap permintaan akan dilempar ke \textit{worker} terpilih dan dilayani hingga permintaan selesai. Daftar paket yang akan digunakan tertera pada Kode Sumber \ref{paketBalancer}.
+				Mekanisme prioritas berbasis konten diterapkan untuk menjalankan balancer. Mekanisme ini hanya akan memilih \textit{worker} sesuai dengan klaster yang aktif dan siap melayani permintaan. Daftar \textit{worker} yang dapat digunakan didapatkan dari basis data yang diakses dengan menggunakan model yang sudah di bahas pada sub-bab sebelumnya. Selanjutnya setiap permintaan akan dilempar ke \textit{worker} terpilih dan dilayani hingga permintaan selesai. Daftar paket yang akan digunakan tertera pada Kode Sumber \ref{paketBalancer}.
 				
 				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Paket untuk Balancer},label=paketBalancer]
 var http = require('http'),
@@ -402,7 +432,7 @@ var path_model = require('./model/path_model')
 
 mongoose.connect('mongodb://127.0.0.1/tugasakhir');
 				
-				\end{lstlisting}
+				end{lstlisting}
 				
 				Balancer seakan-akan menjadi server yang menyediakan aplikasi berbasis web dan berjalan pada port 80. Untuk membuat servis ini, NodeJS perlu menjalankan servis sebagai web server dengan perintah \texttt{http.createServer(function(req, res)\{\}}. Sehingga semua permintaan pengguna dapat masuk ke dalam \textit{balancer} dan diolah \textit{balancer}.
 				
@@ -412,7 +442,7 @@ mongoose.connect('mongodb://127.0.0.1/tugasakhir');
 var cookie = req.headers.cookie;
 var pengguna;
 if (!cookie) cookie='kosong';
-var awal = cookie.indexOf('csrf_cookie_name');
+var awal = cookie.indexOf('csrf\_cookie\_name');
 var akhir = cookie.indexOf(';', awal)
 if (akhir > awal) {
 	pengguna = cookie.substring(awal, akhir)
@@ -530,13 +560,13 @@ query_cache_size			= 64M
 					
 					% Isi Tabel
 					1 & AKTIFKAN & - & Boolean(1) & Status aktif dan tidaknya balancer\\ \hline
-					2 & Ubah IP Default & \texttt{alamat IP} & String & IP worker default yang digunakan balancer \\ \hline
-					3 & Ubah Waktu Cek & \texttt{waktu} & String & Waktu untuk cek worker \\ \hline
+					2 & Ubah IP Default & \texttt{alamat IP} & String & IP \textit{worker} default yang digunakan balancer \\ \hline
+					3 & Ubah Waktu Cek & \texttt{waktu} & String & Waktu untuk cek \textit{worker} \\ \hline
 					
 				\end{longtable}
 			
 			\subsection{Pengendali /cluster}
-				Pengendali ini berfungsi untuk mendaftar worker aktif dan tidak aktif di dalam klaster. Terdapat dua klaster yaitu klaster view dan klaster insert. Penjelasan implementasi pengendali terdapat pada Tabel \ref{tabelPengendaliCluster}.
+				Pengendali ini berfungsi untuk mendaftar \textit{worker} aktif dan tidak aktif di dalam klaster. Terdapat dua klaster yaitu klaster view dan klaster insert. Penjelasan implementasi pengendali terdapat pada Tabel \ref{tabelPengendaliCluster}.
 				
 				\begin{longtable}{|p{0.05\textwidth}|p{0.15\textwidth}|p{0.2\textwidth}|p{0.15\textwidth}|p{0.25\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
 					
@@ -550,8 +580,8 @@ query_cache_size			= 64M
 					\endlastfoot
 					
 					% Isi Tabel
-					1 & GET / & - & Daftar worker &  Daftar worker ditampilkan pada tabel, dipisahkan berdasarkan klaster\\ \hline
-					2 & POST / & \texttt{alamat IP} & Daftar worker & Worker baru ditambahkan sesuai klaster. Daftar worker di update. \\ \hline				
+					1 & GET / & - & Daftar \textit{worker} &  Daftar \textit{worker} ditampilkan pada tabel, dipisahkan berdasarkan klaster\\ \hline
+					2 & POST / & \texttt{alamat IP} & Daftar \textit{worker} & Worker baru ditambahkan sesuai klaster. Daftar \textit{worker} di update. \\ \hline				
 					
 				\end{longtable}
 			
@@ -577,7 +607,7 @@ query_cache_size			= 64M
 	
 	\chapter{Pengujian dan Evaluasi}
 		\section{Lingkungan Uji Coba}
-			Lingkungan pengujian menggunakan empat komponen yang terdiri dari : satu komputer balancer, empat komputer \textit{worker}, satu komputer basis data, dan enam komputer penguji. Semua komponen menggunakan komputer fisik dan tidak menggunakan virtualisasi. Arsitektur jaringan tertera pada Gambar \ref{gambarArsitekturUjiCoba}. Pengujian dilakukan di Laboratorium Arsitektur dan Jaringan Komputer, Lantai tiga, 
+			Lingkungan pengujian menggunakan empat komponen yang terdiri dari : satu komputer balancer, empat komputer \textit{worker}, satu komputer basis data, dan enam komputer penguji. Semua komponen menggunakan komputer fisik dan tidak menggunakan virtualisasi. Arsitektur jaringan tertera pada Gambar \ref{gambarArsitekturUjiCoba}. Pengujian dilakukan di Laboratorium Arsitektur dan Jaringan Komputer Jurusan Teknik Informatika ITS. 
 			
 			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 				\centering
@@ -700,7 +730,7 @@ query_cache_size			= 64M
 			\end{itemize}
 			
 		\section{Skenario Uji Coba}
-			Pengujian menggunakan aplikasi berbasis web yang dijalankan pada worker. Aplikasi yang digunakan adalah aplikasi Penerimaan Peserta Didik Baru Kota Surabaya tahun 2015. Skenario pengujian dibedakan menjadi 2 bagian yaitu :
+			Pengujian menggunakan aplikasi berbasis web yang dijalankan pada \textit{worker}. Aplikasi yang digunakan adalah aplikasi Penerimaan Peserta Didik Baru Kota Surabaya tahun 2015. Skenario pengujian dibedakan menjadi 2 bagian yaitu :
 			\begin{itemize}
 				\item \textbf{Uji Fungsionalitas}. Pengujian ini didasarkan pada fungsionalitas yang disajikan sistem. Sistem sendiri memiliki 3 fitur utama yaitu pembagi beban, kontrol layanan dan halaman admin.
 				\item \textbf{Uji Performa}. Pengujian ini untuk menguji ketahanan sistem terhadap sejumlah permintaan yang masuk. Pengujian dilakukan dengan melakukan benchmark pada sistem.
@@ -710,9 +740,33 @@ query_cache_size			= 64M
 				Dengan adanya tiga fitur pada balancer, sehingga pengujian akan dilakukan pada tiga fitur secara terpisah.
 				\begin{itemize}
 					\item \textbf{Pembagi Beban} \\
-					Sistem yang berjalan akan memisahkan permintaan yang menuju	ke halaman insert dan halaman view. Pada pengujian ini diharapkan setiap permintaan diarahkan ke klaster yang sesuai. Permintaan dari pengguna dilihat dari URL yang diakses.
+					Sistem yang berjalan akan memisahkan permintaan yang menuju	ke halaman insert dan halaman view. Pada pengujian ini diharapkan setiap permintaan diarahkan ke klaster yang sesuai. Permintaan dari pengguna dilihat dari URL yang diakses. Kategori URL dan \textit{worker} yang melayani tertera pada Tabel \ref{tabelKategoriURL}.
+					
+					\begin{longtable}{|p{0.2\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+						
+						% Kepala tabel, berulang di setiap halaman
+						\caption{Kategori URL dan Klaster Worker} \label{tabelKategoriURL} \\
+						\hline
+						\textbf{Cookie} & \textbf{Kategori URL} & \textbf{Alamat IP Worker} \\ \hline
+						
+						\endhead
+						\endfoot
+						\endlastfoot
+						
+						% Isi Tabel
+						Ada & View & 10.151.36.21 \\ \cline{3-3}
+						&& 10.151.36.34 \\ \hline
+						Ada & Insert & 10.151.36.201 \\ \cline{3-3}
+						&& 10.151.36.203 \\ \hline
+						Tidak ada & View, Insert & 10.151.36.201 \\ \hline
+						
+						
+					\end{longtable}
+					
 					\item \textbf{Kontrol Layanan} \\
-					Kontrol Layanan akan mengeluarkan secara sementara worker yang sedang tidak aktif dari klasternya. Ketika worker sudah kembali pada fase aktif dan siap melayani, kontrol layanan akan kembali memasukkan worker ke dalam sistem. Pengujian ini akan memastikan worker yang sedang tidak aktif, benar-benar tidak mendapatkan aliran permintaan dari pengguna.
+					Kontrol Layanan akan mengeluarkan secara sementara \textit{worker} yang sedang tidak aktif dari klasternya. Ketika \textit{worker} sudah kembali pada fase aktif dan siap melayani, kontrol layanan akan kembali memasukkan \textit{worker} ke dalam sistem. Pengujian ini akan memastikan \textit{worker} yang sedang tidak aktif, benar-benar tidak mendapatkan aliran permintaan dari pengguna.
+					
+					
 					\item \textbf{Halaman Admin} \\
 					Pengujian dilakukan dengan pengaksesan halaman admin yang disediakan sistem dan disesuaikan dengan harapan luaran yang didapatkan. Beberapa hal yang akan diuji berdasarkan pengendali pada halaman admin seperti yang tertera pada Tabel
 				\end{itemize}
@@ -733,9 +787,9 @@ query_cache_size			= 64M
 					1 & /index & Melihat status balancer & Status balancer (aktif atau tidak) \\ \cline{3-4}
 					&& Mengaktifkan	balancer & Status balancer aktif dan servis balancer berjalan \\ \cline{3-4}
 					&& Mematikan balancer & Status balancer nonaktif dan servis balancer mati \\ \hline
-					2 & /cluster & Melihat daftar worker pada klaster & Daftar worker dalam klaster \\ \cline{3-4}
-					&& Menambahkan worker ke dalam klaster & Worker dalam klaster bertambah \\ \cline{3-4}
-					&& Menghapus worker dari klaster & Worker dalam klaster berkurang \\ \hline
+					2 & /cluster & Melihat daftar \textit{worker} pada klaster & Daftar \textit{worker} dalam klaster \\ \cline{3-4}
+					&& Menambahkan \textit{worker} ke dalam klaster & Worker dalam klaster bertambah \\ \cline{3-4}
+					&& Menghapus \textit{worker} dari klaster & Worker dalam klaster berkurang \\ \hline
 					3 & /path & Melihat daftar URL untuk setiap klaster & Daftar URL \\ \cline{3-4}
 					&& Menambahkan URL ke dalam klaster & URL dalam klaster bertambah \\ \cline{3-4}
 					&& Menghapus URL dari dalam klaster & URL dalam klaster berkurang \\ \hline
@@ -743,7 +797,7 @@ query_cache_size			= 64M
 				\end{longtable}
 			
 			\subsection{Skenario Uji Performa}
-				Pada pengujian ini dilakukan benchmark dengan menggunakan aplikasi berbasis Java yaitu Apache JMeter (). Karena balancer melakukan pemisahan akses, pengujian akan berlangsung berupa insert dan view. Akses insert akan melakukan pendaftaran ke aplikasi PPDB Surabaya 2015 pada jenjang SMA Umum, sedangkan akses view akan menampilkan beberapa halaman pada aplikasi yang sama sekali tidak melakukan insert ke basis data. Apache JMeter akan	membuat thread untuk setiap akses ke aplikasi. Pengujian akan berlangsung bertahap mulai dari 500 thread, 1000 thread dan 1500 thread dalam satu detik. Dari hasil pengujian akan didapatkan waktu respon terhadap permintaan. Waktu ini akan dibandingkan dengan penggunaan arsitektur yang dibangun pada pelaksanaan PPDB Surabaya 2015. Arsitektur sistem PPDB Surabaya 2015 tertera pada Gambar \ref{gambarArsitekturPPDB}.
+				Pada pengujian ini dilakukan benchmark dengan menggunakan aplikasi berbasis Java yaitu Apache JMeter (). Karena balancer melakukan pemisahan akses, pengujian akan berlangsung berupa insert dan view. Akses insert akan melakukan pendaftaran ke aplikasi PPDB Surabaya 2015 pada jenjang SMA Umum, sedangkan akses view akan menampilkan beberapa halaman pada aplikasi yang sama sekali tidak melakukan insert ke basis data. Apache JMeter akan membuat thread untuk setiap akses ke aplikasi. Pengujian akan berlangsung bertahap mulai dari 300, 600, 900, 1200 dan 1500 thread dalam satu detik. Dari hasil pengujian akan didapatkan waktu respon terhadap permintaan. Waktu ini akan dibandingkan dengan penggunaan arsitektur yang dibangun pada pelaksanaan PPDB Surabaya 2015. Arsitektur sistem PPDB Surabaya 2015 tertera pada Gambar \ref{gambarArsitekturPPDB}.
 		
 				\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 					\centering
@@ -761,67 +815,81 @@ query_cache_size			= 64M
 				\subsubsection{Pembagi Beban}
 					Dilakukan pengujian acak untuk mengakses aplikasi PPDB Surabaya 2015 melalui balancer NodeJS. Hasil pengujian seperti tertera pada Tabel
 					
-					\begin{longtable}{|p{0.3\textwidth}|p{0.2\textwidth}|p{0.4\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+					\begin{longtable}{|p{0.13\textwidth}|p{0.13\textwidth}|p{0.33\textwidth}|p{0.2\textwidth}|p{0.07\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
 						
 						% Kepala tabel, berulang di setiap halaman
 						\caption{Daftar Akses URL dan Worker yang Melayani} \label{tabelBagiBeban} \\
 						\hline
-						\textbf{URL} & \textbf{Aksi} & \textbf{Worker} \\ \hline
+						\textbf{Cookie} & \textbf{Kategori} & \textbf{URL} & \textbf{Worker} & \textbf{Hasil}\\ \hline
 						
 						\endhead
 						\endfoot
 						\endlastfoot
 						
 						% Isi Tabel
-						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
-						umum & view	& petugas :  10.151.36.201 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						rekap & view & petugas :  10.151.36.34 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
-						pendaftaran	& insert & petugas :  10.151.36.201 \\ \hline
-						umum & view & petugas :  10.151.36.201 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
-						rekap & view & petugas :  10.151.36.34 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
-						pendaftaran	& insert & petugas :  10.151.36.203 \\ \hline
-						pendaftaran	& insert & petugas :  10.151.36.203 \\ \hline
-						pendaftaran	& insert & petugas :  10.151.36.201 \\ \hline
-						umum & view & petugas :  10.151.36.201 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.203 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						rekap & view & petugas :  10.151.36.34 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						umum & view & petugas :  10.151.36.34 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
-						rekap & view & petugas :  10.151.36.34 \\ \hline
-						pendaftaran & insert & petugas :  10.151.36.201 \\ \hline
+						kosong & insert & /pendaftaran/pilih\_kk & 10.151.36.201 & OK\\ \hline
+						kosong & view & /umum/sambutan & 10.151.36.201 & OK\\ \hline
+						ada & view & /umum/ketentuan & 10.151.36.21 & OK\\ \hline
+						ada & insert & /pendaftaran & 10.151.36.203 & OK\\ \hline
+						ada & view & /umum/subrayon & 10.151.36.21 & OK\\ \hline
+						kosong & insert & /pendaftaran/pilih\_kk & 10.151.36.201 & OK\\ \hline
+						kosong & view & /umum/sambutan & 10.151.36.201 & OK\\ \hline
+						ada & view & /umum/inklusif & 10.151.36.21 & OK\\ \hline
+						ada & view & /umum/jadwal & 10.151.36.21 & OK\\ \hline
+						ada & view & /umum/ketentuan & 10.151.36.21 & OK\\ \hline
+						ada & view & /rekap/lihat/sma/umum & 10.151.36.21 & OK\\ \hline
+						ada & insert & /pendaftaran & 10.151.36.201 & OK\\ \hline
+						ada & view & /umum/subrayon & 10.151.36.21 & OK\\ \hline
+						ada & insert & /pendaftaran/view & 10.151.36.203 & OK\\ \hline
+						ada & view & /umum/inklusif & 10.151.36.21 & OK\\ \hline
+						kosong & insert & /pendaftaran/pilih\_kk & 10.151.36.201 & OK\\ \hline
+						kosong & view & /umum/sambutan & 10.151.36.201 & OK\\ \hline
+						ada & view & /umum/jadwal & 10.151.36.21 & OK\\ \hline
+						ada & view & /umum/ketentuan & 10.151.36.21 & OK\\ \hline
+						ada & view & /rekap/lihat/sma/umum & 10.151.36.21 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran & 10.151.36.203 & OK\\ \hline
+						ada & view & /umum/subrayon & 10.151.36.21 & OK\\ \hline
+						ada & insert & /pendaftaran/view & 10.151.36.201 & OK\\ \hline
+						ada & view & /umum/inklusif & 10.151.36.21 & OK\\ \hline
+						ada & view & /umum/jadwal & 10.151.36.21 & OK\\ \hline
+						ada & view & /rekap/lihat/sma/umum & 10.151.36.21 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.201 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/view & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.201 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.201 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.201 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.201 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.201 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.201 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & view & /rekap/lihat/sma/umum & 10.151.36.21 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.201 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & insert & /pendaftaran/submit & 10.151.36.203 & OK\\ \hline
+						ada & view & /rekap/lihat/sma/umum & 10.151.36.21 & OK\\ \hline
+						ada & view & /rekap/lihat/sma/umum & 10.151.36.21 & OK\\ \hline
 						
 						
 					\end{longtable}
 					
-					Worker dengan alamat IP 10.151.36.201 dan 10.151.36.203 berada pada klaster insert dan worker dengan alamat IP 10.151.36.34 berada pada klaster view. Pada beberapa percobaan muncul akses view yang dilayani worker pada klaster insert. Ini karena worker tersebut memang menjadi worker default ketika terdapat permintaan yang tidak memiliki cookie di dalamnya.
-				
+					Sesuai dengan skenario ujicoba yang diberikan pada Tabel \ref{tabelKategoriURL}, hasil ujicoba pada pembagian beban ke klaster yang sesuai dengan kategori 100\% berhasil dilaksanakan. Cookie yang ada tidak ditampilkan untuk memberikan ruang pada penyajian data, karena panjang cookie setiap permintaan akan membuat penyajian data tidak mudah dibaca.
+									
 				\subsubsection{Kontrol Layanan}
 				
 				\subsubsection{Halaman Admin}
-			
+					
 			
 			\subsection{Uji Performa}
 				Seperti yang sudah dijelaskan pada bab 5.2 pengujian performa dilakukan bertahap dengan menggunakan jumlah thread yang bertahap. Beberapa hal yang dibandingkan adalah sebagai berikut:
@@ -847,30 +915,52 @@ query_cache_size			= 64M
 					
 					Sementara untuk penggunaan memori tidak ada perubahan yang signifikan. Ketika menggunakan thread berjumlah 500 dan 1500 kenaikan penggunaan memori hanya mencapai 10\% saja.
 				
-				\subsection{Waktu Respon}
-					Pengujian waktu respon dilakukan dengan melakukan insert dan view secara bersamaan ke dalam sistem. Waktu yang digunakan dicatat pada Apache JMeter dan disajikan pada tampilan grafik yang memudahkan untuk dibaca. Untuk setiap jumlah thread dilakukan percobaan hingga 5 kali dan diambil grafik yang menunjukkan	waktu terlama dan waktu tercepat pada keenam komputer penguji.
-					Untuk percobaan dengan 500 thread dan 1000 thread, hasilnya dapat dilihat pada lampiran. Pada percobaan dengan 1500 thread, dilakukan percobaan hingga 15 kali perulangan dengan jumlah worker dalam klaster insert yang berbeda. Pada 5 percobaan awal digunakan hanya dua worker yang bekerja pada klaster insert. Lima percobaan selanjutnya menjadi tiga worker. Dan selanjutnya empat worker yang tersedia digunakan sebagai klaster insert.
+				\subsubsection{Waktu Respon}
+					Pengujian waktu respon dilakukan dengan melakukan insert dan view secara bersamaan ke dalam sistem. Waktu yang digunakan dicatat pada Apache JMeter dan disajikan pada tampilan grafik yang memudahkan untuk dibaca. 
+					
+					\begin{longtable}{|p{0.3\textwidth}|p{0.3\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+						
+						% Kepala tabel, berulang di setiap halaman
+						\caption{Kombinasi Jumlah Worker dalam Klaster untuk Uji Coba} \label{tabelKombinasi} \\
+						\hline
+						\textbf{Klaster Insert} & \textbf{Klaster View} \\ \hline
+						
+						\endhead
+						\endfoot
+						\endlastfoot
+						
+						% Isi Tabel
+						1 Worker (2 GB) & 3 Worker \\ \hline
+						1 Worker (4 GB) & 3 Worker \\ \hline
+						2 Worker (2 GB) & 2 Worker (2 GB) \\ \hline
+						2 Worker (4 GB) & 2 Worker (4 GB) \\ \hline
+						2 Worker (campur) & 2 Worker (campur) \\ \hline
+						3 Worker & 1 Worker (2 GB) \\ \hline
+						3 Worker & 1 Worker (4 GB) \\ \hline
+						
+						
+					\end{longtable}
+					
+					Pengujian dilakukan dengan kombinasi yang berbeda-beda pada setiap klaster. Kombinasi jumlah \textit{worker} dalam klaster untuk pengujian tertera pada Tabel \ref{tabelKombinasi}.
+					
+					
+					
+					Untuk setiap kombinasi dilakukan pengujian dengan jumlah thread dari 300 hingga 1500 thread. Dari semua kombinasi yang dilakukan didapatkan hasil terbaik dengan waktu respon tercepat yang tertera pada Gambar \ref{gambarResponTerbaik}.
 					
 					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 						\centering
-						\includegraphics[width=\linewidth]{contoh_img/1500/balancer}
-						\caption{Waktu Respon 1500 Thread dengan Balancer NodeJS}
-						\label{gambar1500nodejs}
+						\includegraphics[width=\linewidth]{contoh_img/viewworker2gb}
+						\caption{Waktu Respon Terbaik dengan Kombinasi Klaster}
+						\label{gambarResponTerbaik}
 					\end{figure}
 					
-					Percobaan pada 1500 thread ini dibandingkan dengan hasil percobaan 1500 thread pada arsitektur jaringan PPDB Surabaya 2015. Perbedaan waktu respon tertera pada \ref{gambar1500nodejs} dan \ref{gambar1500nginx}.
+					Hasil waktu respon terbaik ini dibandingkan dengan hasil pengujian pada arsitektur sistem PPDB Surabaya 2015. Hasil yang didapatkan tertera pada Gambar xx.
 					
-					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
-						\centering
-						\includegraphics[width=\linewidth]{contoh_img/1500/nginx}
-						\caption{Waktu Respon 1500 Thread dengan Balancer Nginx}
-						\label{gambar1500nginx}
-					\end{figure}
 					
 					Nginx bekerja lebih cepat dibandingkan dengan balancer dengan NodeJS. Pada saat pengujian dengan menggunakan balancer NodeJS, permintaan akan terhenti sebelum selesai dieksekusi. Hal ini membuat waktu respon yang didapat menjadi lebih lama.
 					
-				\subsection{Permintaan Terlayani}
-					Pada percobaan dengan 1500 thread, balancer Node JS dengan 4 worker pada klaster insert dan 1 worker pada klaster view memberikan ketersediaan layanan lebih baik dibandingan dengan Nginx yang menggunakan 4 worker untuk semua aktivitas. Perbedaan ini didapatkan dari hasil benchmark yang kemudian di rata-rata nilai error yang muncul setelah benchmark selesai. Hasil yang didapat
+				\subsubsection{Permintaan Terlayani}
+					Pada percobaan dengan 1500 thread, balancer Node JS dengan 4 \textit{worker} pada klaster insert dan 1 \textit{worker} pada klaster view memberikan ketersediaan layanan lebih baik dibandingan dengan Nginx yang menggunakan 4 \textit{worker} untuk semua aktivitas. Perbedaan ini didapatkan dari hasil benchmark yang kemudian di rata-rata nilai error yang muncul setelah benchmark selesai. Hasil yang didapat
 					tertera pada Tabel \ref{tabelGalat}.
 					
 					\begin{longtable}{|p{0.5\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
@@ -911,16 +1001,17 @@ query_cache_size			= 64M
 			\section{Kesimpulan}
 				Dari proses perancangan, implementasi dan pengujian terhadap sistem, dapat diambil beberapa kesimpulan berikut:
 				\begin{enumerate}
-					\item Pembagian beban kerja berdasarkan konten permintaan pengguna dilakukan dengan membaca URL yang diakses pengguna. Proses ini terbilang mudah karena sudah banyak paket atau modul yang dapat digunakan untuk membaca permintaan pengguna yang masuk ke dalam server, salah satunya adalah paket http-proxy yang dimiliki NodeJS. Pembagian beban kerja berdasarkan URL sudah teruji pada uji fungsionalitas.
-					\item Pengelompokkan server atau worker berdasarkan konten permintaan pengguna dapat dilakukan manual oleh administrator sistem. NodeJS berperan sebagai balancer yang membaca pengelompokkan yang sudah dimasukkan oleh administrator. Kinerja \textit{worker} berdasarkan pengelompokkan yang ada sudah teruji uji fungsionalitas dan uji performa.
-					\item Akses pada halaman informasi dan halaman daftar memiliki beban yang berbeda. Dengan memfokuskan kinerja setiap \textit{worker} tidak lebih mempercepat respon yang diberikan kepada pengguna. Dari hasil pengujian didapatkan bahwa semakin tinggi angka pengakses, waktu respon juga semakin tinggi. Namun jumlah \textit{worker} yang bekerja pada setiap klaster sangat mempengaruhi keberhasilan sebuah permintaan untuk dilayani.
-					\item Kontrol ketersediaan layanan dapat dilakukan dengan pengecekan berkala pada sistem yang sedang berjalan. Dua langkah yang digunakan adalah mengirim paket ICMP dan meminta paket melalui port 80. 
+					\item Pembagian beban kerja berdasarkan konten permintaan pengguna dilakukan dengan membaca URL yang diakses pengguna. Pembagian beban kerja berhasil dilakukan dengan pengujian beban kerja yang menghasilkan 100\% sukses. 
+					\item Berdasarkan hasil pengujian didapatkan penggunaan CPU yang meningkat sehingga menyebabkan waktu respon yang makin lama. Hal ini disebabkan NodeJS membuat sebuah thread untuk melayani setiap permintaan baru yang masuk ke sistem.
+					\item Kontrol ketersediaan layanan dapat dilakukan dengan melakukan pengecekan servis pada \textit{worker}. Untuk mengeluarkan \textit{worker} dari aktivitas melayani pengguna, tidak dibutuhkan mekanisme untuk merestart sistem. Mekanisme ini menggunakan basis data sebagai dasar balancer untuk meneruskan permintaan.
+					\item Dibandingkan dengan sistem yang sudah berjalan sebelumnya, dengan menggunakan Nginx sebagai balancer, NodeJS memberikan hasil penggunaan CPU yang buruk (100\% untuk 1500 thread) sementara Nginx memberikan hasil yang memuaskan (kurang dari 10\% untuk 1500 thread).
 				\end{enumerate}
 			
 			\section{Saran}
 				Berikut beberapa saran yang diberikan untuk pengembangan lebih lanjut:
 				\begin{itemize}
-					\item Perlu adanya penelitian lebih lanjut dengan menggunakan komputer yang memiliki spesifikasi lebih baik. 
+					\item Mekanisme load balancing yang sudah dirancang perlu ditambah dengan mekanisme pengecekan ketersediaan \textit{worker}. Ketersediaan dapat berupa penggunaan CPU dan memori serta batas \textit{open file} jika memang proses pada \textit{worker} dibatasi \textit{open file}.
+					\item Kontrol ketersediaan layanan perlu ditambah parameter untuk memastikan apakah \textit{worker} benar-benar tidak bisa memberikan layanan ke pengguna.
 				\end{itemize}
 				
 		
@@ -1218,10 +1309,61 @@ var path = mongoose.model('path', pathSchema);
 
 exports.path = path;
 
+exports.simpanPathBaru = function(data, callback){
+	var newPath = new pathI({path: data.path, aksi: data.aksi})
+	newPath.save(function(errr){
+		callback(errr,newPath)
+	})
+}
+
+exports.hapusPath = function(path, callback){
+	pathI.findOneAndRemove({path: path}, function(err, result){
+		if (err) console.log(err)
+		callback(err, result)
+	})
+}
 
 			
-			\end{lstlisting}	
+			\end{lstlisting}
+		
+		\section{Setting Model}
+			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Setting Model untuk Koleksi Setting},label=settingModel]	
+var mongoose = require('mongoose');
+
+var pathSchema = new mongoose.Schema({
+	setting: String,
+	pakeangka: Number,
+	pakehuruf: String
+},{
+	collection : 'setting'
+})
+
+var settingBalancer = mongoose.model('setting', pathSchema);
+
+exports.setting = settingBalancer;
+
+exports.ubahSettingIP = function(data, callback){
+	settingBalancer.findOneAndUpdate({setting: data.setting},{$set : {pakehuruf: data.ip}},function(err, result){
+		if (err) console.log(err)
+		callback(err, result)
+	})
+}
+
+exports.ubahSettingWaktu = function(data, callback){
+	settingBalancer.findOneAndUpdate({setting: data.setting},{$set : {pakeangka: data.angka}},function(err, result){
+		if (err) console.log(err)
+		callback(err, result)
+	})
+}
+			
+			\end{lstlisting}
 		
 
 \backmatter % Lampiran tanpa judul LAMPIRAN X, biasanya untuk BIODATA PENULIS
+	\chapter{BIODATA PENULIS}
+		\begin{wrapfigure}{l}{0.3\textwidth}
+			\includegraphics[width=0.29\textwidth]{img/uyung}
+		\end{wrapfigure}
+		
+		\textbf{Bahrul Halimi}, seharusnya memiliki panggilan Rurul, namun karena hal lain menjadi memiliki panggilan Uyung. Pada 20 November 1993 lahir di Pati, Jawa Tengah, kota kecil yang mulai terkenal dengan bisnis karaoke. 17 tahun tidak meninggalkan Pati dan akhirnya memutuskan untuk melanjutkan studi di Institut Teknologi Sepuluh Nopember Surabaya. Penulis mulai akrab dengan dunia komputer pada tingkat pendidikan Sekolah Dasar (SD), namun karena biaya teknologi yang dipelajari tidak sesuai dengan perkembangan pada saat itu. Aktif di dunia koding pada tingkat pendidikan Sekolah Menengah Atas (SMA) dengan mengikuti Olimpiade Komputer, namun tidak pernah lolos pada tingkat provinsi. Hingga buku ini dikeluarkan, penulis masih mendalami ilmu di bidang jaringan pada sisi infrastruktur. Penulis dapat dihubungi melalui surel \texttt{31uyung10@gmail.com}.
 \end{document}
