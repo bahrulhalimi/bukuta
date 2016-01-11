@@ -543,25 +543,24 @@ query_cache_size			= 64M
 			Implementasi Halaman Admin dibagi sesuai dengan rute yang dijelaskan pada Tabel \ref{tabelRuteHalamanAdmin}. Untuk setiap rute dibuat dalam pengendali / \textit{controller} terpisah.
 			
 			\subsection{Pengendali /}
-				Pengendali ini berfungsi untuk aktivasi fungsi \textit{balancer} dan memberikan nilai untuk dua pengaturan utama pada fungsi \textit{balancer}. Dua pengaturan ini adalah \textit{worker} default yang akan digunakan \textit{balancer} ketika permintaan yang masuk tidak memiliki \textit{cookie} dan waktu yang digunakan \textit{balancer} untuk melakukan pengecekan anggota klaster yang digunakan.
-				
-				Tidak ada rute tambahan untuk pengedali ini karena semua tombol yang akan dieksekusi dengan menggunakan pustaka Angular JS. Setiap aksi terhadap tombol akan diterima Angular JS dan diolah kemudian elemen yang bersangkutan akan diganti sesuai dengan data yang baru saja disimpan, dihapus, maupun disunting. Adapun tombol yang ada pada pengendali ini tertera pada Tabel \ref{tabelPengendaliHome}.
+				Pengendali ini berfungsi untuk aktivasi fungsi \textit{balancer} dan memberikan nilai untuk dua pengaturan utama pada fungsi \textit{balancer}. Dua pengaturan ini adalah \textit{worker} default yang akan digunakan \textit{balancer} ketika permintaan yang masuk tidak memiliki \textit{cookie} dan waktu yang digunakan \textit{balancer} untuk melakukan pengecekan anggota klaster yang digunakan. Penjelasan implementasi pengendali terdapat pada Tabel \ref{tabelPengendaliHome}.
 				
 				\begin{longtable}{|p{0.05\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
 					
 					% Kepala tabel, berulang di setiap halaman
-					\caption{Daftar Tombol pada Pengendali /} \label{tabelPengendaliHome} \\
+					\caption{Implementasi Pengendali /} \label{tabelPengendaliHome} \\
 					\hline
-					\textbf{No} & \textbf{Tombol} & \textbf{Masukan} & \textbf{Luaran} & \textbf{Keterangan} \\ \hline
+					\textbf{No} & \textbf{Rute} & \textbf{Masukan} & \textbf{Luaran} & \textbf{Proses} \\ \hline
 					
 					\endhead
 					\endfoot
 					\endlastfoot
 					
 					% Isi Tabel
-					1 & AKTIFKAN & - & Boolean(1) & Status aktif dan tidaknya balancer\\ \hline
-					2 & Ubah IP Default & \texttt{alamat IP} & String & IP \textit{worker} default yang digunakan balancer \\ \hline
-					3 & Ubah Waktu Cek & \texttt{waktu} & String & Waktu untuk cek \textit{worker} \\ \hline
+					1 & GET / & - & \texttt{status balancer}, \texttt{waktu}, \texttt{alamat IP} & Data ditampilkan dengan teks dan ikon \\ \hline
+					2 & POST / & - & \texttt{status balancer} & Kirim perintah aktifkan/matikan; Ubah tampilan status balancer \\ \hline
+					3 & POST / & \texttt{alamat IP} & \texttt{alamat IP} & Kirim IP \textit{worker} default; Ubah tampilan \textit{worker} default \\ \hline
+					4 & POST / & \texttt{waktu} & \texttt{waktu} & Kirim waktu untuk pengecekan; Ubah waktu pengecekan \\ \hline
 					
 				\end{longtable}
 			
@@ -766,9 +765,11 @@ query_cache_size			= 64M
 					\item \textbf{Kontrol Layanan} \\
 					Kontrol Layanan akan mengeluarkan secara sementara \textit{worker} yang sedang tidak aktif dari klasternya. Ketika \textit{worker} sudah kembali pada fase aktif dan siap melayani, kontrol layanan akan kembali memasukkan \textit{worker} ke dalam sistem. Pengujian ini akan memastikan \textit{worker} yang sedang tidak aktif, benar-benar tidak mendapatkan aliran permintaan dari pengguna.
 					
+					Pengujian dilakukan dengan \textit{benchmark} sebanyak 300 thread (150 thread insert dan 150 thread view). Sebelum \textit{benchmark} dilakukan, \texttt{access.log} di setiap \textit{worker} akan dihapus unt
+					
 					
 					\item \textbf{Halaman Admin} \\
-					Pengujian dilakukan dengan pengaksesan halaman admin yang disediakan sistem dan disesuaikan dengan harapan luaran yang didapatkan. Beberapa hal yang akan diuji berdasarkan pengendali pada halaman admin seperti yang tertera pada Tabel
+					Pengujian dilakukan dengan pengaksesan halaman admin yang disediakan sistem dan disesuaikan dengan harapan luaran yang didapatkan. Beberapa hal yang akan diuji berdasarkan pengendali pada halaman admin seperti yang tertera pada Tabel \ref{tabelUjiFungsionalitas}.
 				\end{itemize}
 				
 				\begin{longtable}{|p{0.05\textwidth}|p{0.17\textwidth}|p{0.4\textwidth}|p{0.2\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
@@ -784,9 +785,11 @@ query_cache_size			= 64M
 					
 					% Isi Tabel
 					
-					1 & /index & Melihat status balancer & Status balancer (aktif atau tidak) \\ \cline{3-4}
+					1 & /index & Melihat status balancer, IP default, waktu cek & Status balancer (aktif atau tidak), IP worker default tampil, waktu cek tampil \\ \cline{3-4}
 					&& Mengaktifkan	balancer & Status balancer aktif dan servis balancer berjalan \\ \cline{3-4}
-					&& Mematikan balancer & Status balancer nonaktif dan servis balancer mati \\ \hline
+					&& Mematikan balancer & Status balancer nonaktif dan servis balancer mati \\ \cline{3-4}
+					&& Mengganti IP worker default & IP worker berubah dan ditampilkan \\ \cline{3-4}
+					&& Mengganti waktu cek & Waktu cek berubah dan ditampilkan \\ \hline
 					2 & /cluster & Melihat daftar \textit{worker} pada klaster & Daftar \textit{worker} dalam klaster \\ \cline{3-4}
 					&& Menambahkan \textit{worker} ke dalam klaster & Worker dalam klaster bertambah \\ \cline{3-4}
 					&& Menghapus \textit{worker} dari klaster & Worker dalam klaster berkurang \\ \hline
@@ -887,8 +890,37 @@ query_cache_size			= 64M
 					Sesuai dengan skenario ujicoba yang diberikan pada Tabel \ref{tabelKategoriURL}, hasil ujicoba pada pembagian beban ke klaster yang sesuai dengan kategori 100\% berhasil dilaksanakan. Cookie yang ada tidak ditampilkan untuk memberikan ruang pada penyajian data, karena panjang cookie setiap permintaan akan membuat penyajian data tidak mudah dibaca.
 									
 				\subsubsection{Kontrol Layanan}
+					
 				
 				\subsubsection{Halaman Admin}
+					Pengujian dilakukan sesuai dengan skenario ujicoba. Hasil dan evaluasi yang didapatkan dari pengujian halaman admin tertera pada Tabel \ref{tabelUjiFungsionalitasHasil}.
+					
+					\begin{longtable}{|p{0.05\textwidth}|p{0.17\textwidth}|p{0.4\textwidth}|p{0.2\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+						
+						% Kepala tabel, berulang di setiap halaman
+						\caption{Uji Fungsionalitas Halaman Admin} \label{tabelUjiFungsionalitasHasil} \\
+						\hline
+						\textbf{No} & \textbf{Pengendali} & \textbf{Uji Coba} & \textbf{Hasil} \\ \hline
+						
+						\endhead
+						\endfoot
+						\endlastfoot
+						
+						% Isi Tabel
+						
+						1 & /index & Melihat status balancer, IP default, waktu cek & Sukses - 1190 ms \\ \cline{3-4}
+						&& Mengaktifkan	balancer & Sukses - 354 ms \\ \cline{3-4}
+						&& Mematikan balancer & Sukses - 372 ms \\ \cline{3-4}
+						&& Mengganti IP worker default & Sukses - 17 ms \\ \cline{3-4}
+						&& Mengganti waktu cek & Sukses - 16 ms \\ \hline
+						2 & /cluster & Melihat daftar \textit{worker} pada klaster & Sukses - 1300 ms \\ \cline{3-4}
+						&& Menambahkan \textit{worker} ke dalam klaster & Sukses - 105 ms \\ \cline{3-4}
+						&& Menghapus \textit{worker} dari klaster & Worker dalam klaster berkurang \\ \hline
+						3 & /path & Melihat daftar URL untuk setiap klaster & Daftar URL \\ \cline{3-4}
+						&& Menambahkan URL ke dalam klaster & URL dalam klaster bertambah \\ \cline{3-4}
+						&& Menghapus URL dari dalam klaster & URL dalam klaster berkurang \\ \hline
+						
+					\end{longtable}
 					
 			
 			\subsection{Uji Performa}
@@ -943,11 +975,9 @@ query_cache_size			= 64M
 					
 					Pengujian dilakukan dengan kombinasi yang berbeda-beda pada setiap klaster. Kombinasi jumlah \textit{worker} dalam klaster untuk pengujian tertera pada Tabel \ref{tabelKombinasi}.
 					
-					
-					
 					Untuk setiap kombinasi dilakukan pengujian dengan jumlah thread dari 300 hingga 1500 thread. Dari semua kombinasi yang dilakukan didapatkan hasil terbaik dengan waktu respon tercepat yang tertera pada Gambar \ref{gambarResponTerbaik}.
 					
-					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+					\begin{figure}[h] 
 						\centering
 						\includegraphics[width=\linewidth]{contoh_img/viewworker2gb}
 						\caption{Waktu Respon Terbaik dengan Kombinasi Klaster}
@@ -955,7 +985,6 @@ query_cache_size			= 64M
 					\end{figure}
 					
 					Hasil waktu respon terbaik ini dibandingkan dengan hasil pengujian pada arsitektur sistem PPDB Surabaya 2015. Hasil yang didapatkan tertera pada Gambar xx.
-					
 					
 					Nginx bekerja lebih cepat dibandingkan dengan balancer dengan NodeJS. Pada saat pengujian dengan menggunakan balancer NodeJS, permintaan akan terhenti sebelum selesai dieksekusi. Hal ini membuat waktu respon yang didapat menjadi lebih lama.
 					
