@@ -68,7 +68,7 @@
 \RequirePackage{titlesec}
 	\setcounter{secnumdepth}{3}
     \titleformat{\chapter}[display]{\filcenter\fontsize{11}{11}\bfseries}{\chaptername \ \thechapter}{11pt}{\filcenter\fontsize{11}{11}\bfseries\uppercase}
-    \titlespacing*{\chapter}{0pt}{-50pt}{30pt}
+    \titlespacing*{\chapter}{0pt}{-50pt}{40pt}
     %\titlespacing*{\section}{0pt}{11pt}{0pt}
     %\titlespacing*{\subsection}{0pt}{11pt}{0pt}
     %\titlespacing*{\subsubsection}{0pt}{11pt}{0pt}

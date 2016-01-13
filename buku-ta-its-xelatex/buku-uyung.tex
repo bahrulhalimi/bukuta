@@ -3,6 +3,7 @@
 \usepackage{listings} % Kode sumber
 \usepackage[verbose]{wrapfig}
 \usepackage{etoolbox}
+\usepackage{float}
 
 \renewcommand{\lstlistingname}{Kode Sumber}
 \renewcommand{\lstlistlistingname}{DAFTAR KODE SUMBER}
@@ -40,7 +41,10 @@
 	
 	\cleardoublepage
    \begin{abstract}
-	   	Web-based application become viral in our living society nowadays. One of those application is an on line application for ppdb. \\
+	   	Web-based application become viral in our living society nowadays. One of those application is an on line application for student enrollment. In this kind of application user will access two type of page, the first one is a page with information from database or not and the second one is a page with an insert action to database. With a basic installation of server, server will serve this two type of page and make a bottle neck condition for high access. \\
+	   	There is an idea to load balance every request to another computer, so every request can be handled. Usually, system administrator will use Nginx as a load balancer. But with multiple kind of request, response time to make every request handled, become unstable. \\ 
+	   	Another idea appear, every request will be load balance with content based priority. Content is represented as two type of page before. Node JS will be used as load balancer system and read every header of request and redirect request to specific worker. With MongoDB as a database of system, NodeJS will work consistently for every data that come to the system. \\
+	   	The result show that NodeJS and content-based priority will increase response time for increasing number of access from user. But the mechanism to make a worker focus on one type of page, make every request will be server well.
     	
     	
     	\noindent \textbf{Kata-Kunci}: Load Balance, Content Based Priority, NodeJS, MongoDB.
@@ -92,8 +96,8 @@
 			\indent Dua jenis halaman ini memiliki kebutuhan yang berbeda. Untuk halaman informasi, pengguna mengharapkan akses yang cepat sedangkan untuk halaman daftar, pengguna mengharapkan data yang dimasukkan dapat diproses dengan aman. Padahal di dalam penggunaan mekanisme sebelumnya dan dengan teknologi yang ada, \emph{load balancer} tidak dapat memisahkan dua jenis permintaan ini. Mekanisme yang ada sebelumnya hanya memisahkan banyak permintaan sesuai dengan ketersediaan server melayani pengguna. Padahal ketika proses pemasukkan data di dalam halaman daftar, seharusnya bisa digunakan untuk melayani permintaan pada halaman informasi. \\
 			\indent Muncullah gagasan lain mengenai pengelompokkan permintaan berdasarkan konten yang diinginkan oleh pengguna. Pengelompokkan ini didasarkan pada dua halaman sebelumnya, yakni halaman informasi dan halaman daftar. Tujuannya untuk mengatur penggunaan sumber daya yang digunakan. Dua kelompok server terpisah akan melayani masing-masing permintaan yang berbeda. Dengan permintaan satu tipe dalam satu kelompok server, membuat kerja server menjadi lebih terpusat dan mengurangi beban yang besar. \\
 			\indent Berbeda dengan yang terjadi saat ini, sebuah server atau bahkan dalam sebuah kelompok server, harus melayani berbagai bentuk permintaan dari pengguna, sehingga menyebabkan beban kerja server meningkat. Bahkan waktu dalam penyelesaian suatu permintaan tidak dapat diukur dalam satuan waktu yang sama karena berbedanya bentuk permintaan pengguna. \\
-			\indent Sementara itu di dalam kelompok server yang bekerja bergantian melayani permintaan, ada kalanya sebuah server mengalami gangguan dan sama sekali tidak dapat melayani setiap permintaan pengguna. Padahal setiap permintaan yang ada masih diteruskan oleh load balancer pada server tersebut. Tidak adanya mekanisme untuk memindahkan permintaan dari server mati ke server yang masih aktif membuat akses ke sebuah web menjadi tidak maksimal.
-			Oleh karena itu dibangunlah sistem ini. Dengan adanya sistem load balancing menggunakan algoritma berbasis konten yang memisahkan antara halaman informasi dan halaman daftar diharapkan dapat meningkatkan jumlah pengguna suatu halaman web dengan banyaknya bentuk permintaan dari pengguna. Sistem ini juga akan dibandingkan dengan sistem yang sudah berjalan sebelumnya dengan studi kasus sistem Pendaftaran Peserta Didik Baru Surabaya tahun 2015 dengan Nginx sebagai \textit{load balancer}.
+			\indent Sementara itu di dalam kelompok server yang bekerja bergantian melayani permintaan, ada kalanya sebuah server mengalami gangguan dan sama sekali tidak dapat melayani setiap permintaan pengguna. Padahal setiap permintaan yang ada masih diteruskan oleh load balancer pada server tersebut. Tidak adanya mekanisme untuk memindahkan permintaan dari server mati ke server yang masih aktif membuat akses ke sebuah web menjadi tidak maksimal. \\
+			\indent Oleh karena itu dibangunlah sistem ini. Dengan adanya sistem load balancing menggunakan algoritma berbasis konten yang memisahkan antara halaman informasi dan halaman daftar diharapkan dapat meningkatkan jumlah pengguna suatu halaman web dengan banyaknya bentuk permintaan dari pengguna. Sistem ini juga akan dibandingkan dengan sistem yang sudah berjalan sebelumnya dengan studi kasus sistem Pendaftaran Peserta Didik Baru Surabaya tahun 2015 dengan Nginx sebagai \textit{load balancer}.
 
             
         \section{Rumusan Masalah}
@@ -103,7 +107,7 @@
 			\item Bagaimana menentukan pengelompokkan server berdasarkan konten permintaan pengguna ?
 			\item Bagaimana meningkatkan jumlah pengakses pada halaman informasi dengan terpisahnya akses antara halaman informasi dan halaman daftar ?
 			\item Bagaimana menjaga pengguna tetap dilayani kelompok ser-ver yang tersedia hingga permintaan selesai ?
-			\item Bagaimana perbandingan penggunaan CPU dan memori antara sistem baru dan sistem yang sudah berjalan sebelumnya ?
+			\item Bagaimana perbandingan penggunaan CPU dan memori antara sistem baru dan yang sudah berjalan sebelumnya ?
 			\end{enumerate}
 
         \section{Batasan Masalah}
@@ -432,7 +436,7 @@ var path_model = require('./model/path_model')
 
 mongoose.connect('mongodb://127.0.0.1/tugasakhir');
 				
-				end{lstlisting}
+				\end{lstlisting}
 				
 				Balancer seakan-akan menjadi server yang menyediakan aplikasi berbasis web dan berjalan pada port 80. Untuk membuat servis ini, NodeJS perlu menjalankan servis sebagai web server dengan perintah \texttt{http.createServer(function(req, res)\{\}}. Sehingga semua permintaan pengguna dapat masuk ke dalam \textit{balancer} dan diolah \textit{balancer}.
 				
@@ -442,7 +446,7 @@ mongoose.connect('mongodb://127.0.0.1/tugasakhir');
 var cookie = req.headers.cookie;
 var pengguna;
 if (!cookie) cookie='kosong';
-var awal = cookie.indexOf('csrf\_cookie\_name');
+var awal = cookie.indexOf('csrf_cookie_name');
 var akhir = cookie.indexOf(';', awal)
 if (akhir > awal) {
 	pengguna = cookie.substring(awal, akhir)
@@ -454,7 +458,7 @@ else {
 				
 				\end{lstlisting}
 				
-				Ketika pengguna yang masuk tidak memiliki cookie, pengguna akan dilayani oleh \textit{worker} default. \textit{Worker} ini dipilih manual oleh administrator dan dikelola pada halaman admin. Tanpa melihat kategori URL yang diakses, pengguna akan dilayani oleh \textit{worker} default. Kode Program \ref{cookieKosong} menjelaskan \textit{worker} default melayani pengguna dengan cookie kosong. 
+				Ketika pengguna yang masuk tidak memiliki cookie, cookie pengguna diisi dengan nilai 'kosong', kemudian pengguna akan dilayani oleh \textit{worker} default. \textit{Worker} ini dipilih manual oleh administrator dan dikelola pada halaman admin. Tanpa melihat kategori URL yang diakses, pengguna akan dilayani oleh \textit{worker} default. Kode Program \ref{cookieKosong} menjelaskan \textit{worker} default melayani pengguna dengan cookie kosong. 
 				
 				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Worker Default Melayani Cookie Kosong},label=cookieKosong]
 if (cookie=='kosong') {
@@ -471,7 +475,7 @@ if (cookie=='kosong') {
 				
 				Dalam Kode Program \ref{cookieKosong} muncul perintah \texttt{proxy.web()}. Fungsi ini adalah fungsi bawaan dari paket \texttt{http-proxy} yang akan menjalankan sistem proxy dimana permintaan pengguna dikirimkan ke komputer target, dalam kasus ini komputer target adalah \textit{worker}. Fungsi ini akan digunakan setiap kali pengguna masuk dan dilayani \textit{worker}.
 				
-				Jika pengguna yang masuk memiliki cookie, cookie dan URL yang diakses pengguna akan dicek pada koleksi \texttt{aksi}. Jika ditemukan, \textit{worker} yang melayani sesuai dengan yang ada pada data dari MongoDB. Namun ketika tidak ditemukan data, balancer akan memilihkan \textit{worker} aktif dan yang siap melayani sesuai dengan kategori URL yang diakses. Pada Kode Program \ref{getWorker} tertera mekanisme untuk mendapatkan \textit{worker} aktif.
+				Jika pengguna yang masuk memiliki cookie, cookie dan URL yang diakses pengguna akan dicek pada koleksi \texttt{aktivitas}. Jika ditemukan, \textit{worker} yang melayani sesuai dengan yang ada pada data dari MongoDB. Namun ketika tidak ditemukan data, balancer akan memilihkan \textit{worker} aktif dan yang siap melayani sesuai dengan kategori URL yang diakses. Pada Kode Program \ref{getWorker} tertera mekanisme untuk mendapatkan \textit{worker} aktif.
 				
 				\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Mekanisme Pencarian Worker Aktif},label=getWorker]
 if (result.aksi == 'view') {
@@ -516,7 +520,6 @@ if (result.aksi == 'view') {
 			Hanya ada satu aplikasi yang berjalan yaitu MySQL yang memberikan servis basis data kepada \textit{worker}. Konfigurasi lanjut dibutuhkan agar setiap \textit{worker} dapat menggunakan basis data yang ada. Salah satunya adalah alamat IP yang digunakan server harus dikenali lingkungan implementasi, dalam hal ini lingkungan di Laboratorium AJK. Konfigurasi basis data agar berjalan dengan menggunakan IP tertera pada Kode Sumber \ref{alamatDB}
 			
 			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Konfigurasi MySQL pada Alamat IP AJK},label=alamatDB]
-			
 bind-address		= 10.151.36.205
 			
 			\end{lstlisting}
@@ -765,7 +768,7 @@ query_cache_size			= 64M
 					\item \textbf{Kontrol Layanan} \\
 					Kontrol Layanan akan mengeluarkan secara sementara \textit{worker} yang sedang tidak aktif dari klasternya. Ketika \textit{worker} sudah kembali pada fase aktif dan siap melayani, kontrol layanan akan kembali memasukkan \textit{worker} ke dalam sistem. Pengujian ini akan memastikan \textit{worker} yang sedang tidak aktif, benar-benar tidak mendapatkan aliran permintaan dari pengguna.
 					
-					Pengujian dilakukan dengan \textit{benchmark} sebanyak 300 thread (150 thread insert dan 150 thread view). Sebelum \textit{benchmark} dilakukan, \texttt{access.log} di setiap \textit{worker} akan dihapus unt
+					Pengujian dilakukan sebanyak dua kali dengan masing-masing pengujian sebanyak 300 thread. Pada pengujian pertama semua worker akan diaktifkan dan melayani setiap permintaan. Pada pengujian kedua salah satu worker akan dimatikan layanannya tanpa mengubah konfigurasi pada \textit{load balancer}. \textit{Worker} yang tidak melayani tidak akan mengalami penambahan angka \texttt{layani} pada tampilan halaman admin.
 					
 					
 					\item \textbf{Halaman Admin} \\
@@ -890,12 +893,30 @@ query_cache_size			= 64M
 					Sesuai dengan skenario ujicoba yang diberikan pada Tabel \ref{tabelKategoriURL}, hasil ujicoba pada pembagian beban ke klaster yang sesuai dengan kategori 100\% berhasil dilaksanakan. Cookie yang ada tidak ditampilkan untuk memberikan ruang pada penyajian data, karena panjang cookie setiap permintaan akan membuat penyajian data tidak mudah dibaca.
 									
 				\subsubsection{Kontrol Layanan}
+					Sesuai dengan skenario pengujian yang akan dilakukan, pengujian dilakukan sebanyak dua kali. Servis yang dilayani worker untuk dua kali pengujian tertera pada Tabel \ref{tabelKontrolLayanan}.
 					
+					\begin{longtable}{|p{0.15\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+						
+						% Kepala tabel, berulang di setiap halaman
+						\caption{Daftar Layani Worker} \label{tabelKontrolLayanan} \\
+						\hline
+						\textbf{Pengujian} & \textbf{Worker 1} & \textbf{Worker 2} & \textbf{Worker 3} & \textbf{Worker 4}\\ \hline
+						
+						\endhead
+						\endfoot
+						\endlastfoot
+						
+						1 & 75 & 75 & 150 & 149 \\ \hline
+						2 & 0 & 150 & 150 & 150 \\ \hline
+						
+					\end{longtable}
+					
+					Worker 1 tidak mendapatkan aliran permintaan dari pengguna karena worker 1 dimatikan pada pengujian kedua. Load balancer me-non-aktif-kan fungsi worker 1 sebagai pelayan. Sehingga tidak ada satupun permintaan yang dikirim ke worker 1. Kedua pengujian menghasilkan 100\% sukses.
 				
 				\subsubsection{Halaman Admin}
 					Pengujian dilakukan sesuai dengan skenario ujicoba. Hasil dan evaluasi yang didapatkan dari pengujian halaman admin tertera pada Tabel \ref{tabelUjiFungsionalitasHasil}.
 					
-					\begin{longtable}{|p{0.05\textwidth}|p{0.17\textwidth}|p{0.4\textwidth}|p{0.2\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
+					\begin{longtable}{|p{0.05\textwidth}|p{0.17\textwidth}|p{0.35\textwidth}|p{0.25\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
 						
 						% Kepala tabel, berulang di setiap halaman
 						\caption{Uji Fungsionalitas Halaman Admin} \label{tabelUjiFungsionalitasHasil} \\
@@ -915,10 +936,10 @@ query_cache_size			= 64M
 						&& Mengganti waktu cek & Sukses - 16 ms \\ \hline
 						2 & /cluster & Melihat daftar \textit{worker} pada klaster & Sukses - 1300 ms \\ \cline{3-4}
 						&& Menambahkan \textit{worker} ke dalam klaster & Sukses - 105 ms \\ \cline{3-4}
-						&& Menghapus \textit{worker} dari klaster & Worker dalam klaster berkurang \\ \hline
-						3 & /path & Melihat daftar URL untuk setiap klaster & Daftar URL \\ \cline{3-4}
-						&& Menambahkan URL ke dalam klaster & URL dalam klaster bertambah \\ \cline{3-4}
-						&& Menghapus URL dari dalam klaster & URL dalam klaster berkurang \\ \hline
+						&& Menghapus \textit{worker} dari klaster & Sukses - 26 ms \\ \hline
+						3 & /path & Melihat daftar URL untuk setiap klaster & Sukses - 1820 ms \\ \cline{3-4}
+						&& Menambahkan URL ke dalam klaster & Sukses - 38 ms \\ \cline{3-4}
+						&& Menghapus URL dari dalam klaster & Sukses - 48 ms \\ \hline
 						
 					\end{longtable}
 					
@@ -927,28 +948,32 @@ query_cache_size			= 64M
 				Seperti yang sudah dijelaskan pada bab 5.2 pengujian performa dilakukan bertahap dengan menggunakan jumlah thread yang bertahap. Beberapa hal yang dibandingkan adalah sebagai berikut:
 				
 				\subsubsection{Penggunaan CPU dan Memori}
-					Pengujian dilakukan hingga jumlah thread mencapai 1500. Peningkatan penggunaan CPU dapat dilihat pada Gambar \ref{gambarUsage1500} dan lampiran. Sementara untuk penggunaan CPU pada balancer Nginx tertera pada Gambar \ref{gambarUsageNginx}.
+					Pengujian dilakukan hingga jumlah thread mencapai 1500. Hasil pengujian pada dua platform yaitu Nginx dan Node JS tertera pada Gambar \ref{gambarUsage1500}.
 					
 					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 						\centering
-						\includegraphics[width=\linewidth]{contoh_img/usage/1500}
-						\caption{Penggunaan CPU dengan 1500 Thread}
+						\includegraphics[width=\linewidth]{contoh_img/perbandingan-cpu}
+						\caption{Perbandingan Penggunaan CPU pada 1500 thread}
 						\label{gambarUsage1500}
 					\end{figure}
 					
+					Rata-rata penggunaan CPU ketika koneksi yang masuk berjumlah 1500 koneksi adalah 100\% untuk NodeJS. Jika dibandingkan dengan penggunaan arsitektur lama pada aplikasi PPDB Surabaya 2015, balancer dengan NodeJS memiliki performas buruk dalam hal penggunaan CPU. Hal ini dikarenakan NodeJS akan membuat sebuah thread untuk setiap koneksi yang masuk ke sistem. Thread ini lah yang menjamin keberlangsungan proses yang berjalan secara asinkronus dapat tetap berjalan.
+					
+					Sementara untuk penggunaan memori tidak ada perubahan yang signifikan. Ketika menggunakan thread berjumlah 1500 kenaikan penggunaan memori hanya mencapai 20\% saja. Hasil pengujian penggunaan memori tertera pada Gambar \ref{gambarMemoryUsage}.
+					
 					\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
 						\centering
-						\includegraphics[width=\linewidth]{contoh_img/usage/nginx}
-						\caption{Penggunaan CPU dengan Nginx Balancer}
-						\label{gambarUsageNginx}
+						\includegraphics[width=\linewidth]{contoh_img/perbandingan-memori}
+						\caption{Penggunaan Memori pada 1500 Thread}
+						\label{gambarMemoryUsage}
 					\end{figure}
 					
-					Rata-rata penggunaan CPU ketika koneksi yang masuk berjumlah 1000-1500 koneksi adalah 100\%. Jika dibandingkan dengan penggunaan arsitektur lama pada aplikasi PPDB Surabaya 2015, balancer dengan NodeJS memiliki performas buruk dalam hal penggunaan CPU. 
-					
-					Sementara untuk penggunaan memori tidak ada perubahan yang signifikan. Ketika menggunakan thread berjumlah 500 dan 1500 kenaikan penggunaan memori hanya mencapai 10\% saja.
+					Kedua platform memang tidak menggunakan banyak memori untuk melayani permintaan dari pengguna. Nginx memanfaatkan multi-thread sementara NodeJS menggunakan single-thread. Mekanisme ini akan lebih memakan CPU dibandingkan memori.
 				
 				\subsubsection{Waktu Respon}
 					Pengujian waktu respon dilakukan dengan melakukan insert dan view secara bersamaan ke dalam sistem. Waktu yang digunakan dicatat pada Apache JMeter dan disajikan pada tampilan grafik yang memudahkan untuk dibaca. 
+					
+					Pengujian dilakukan dengan kombinasi yang berbeda-beda pada setiap klaster. Kombinasi jumlah \textit{worker} dalam klaster untuk pengujian tertera pada Tabel \ref{tabelKombinasi}.
 					
 					\begin{longtable}{|p{0.3\textwidth}|p{0.3\textwidth}|} % L = Rata kiri untuk setiap kolom, | = garis batas vertikal.
 						
@@ -964,29 +989,26 @@ query_cache_size			= 64M
 						% Isi Tabel
 						1 Worker (2 GB) & 3 Worker \\ \hline
 						1 Worker (4 GB) & 3 Worker \\ \hline
-						2 Worker (2 GB) & 2 Worker (2 GB) \\ \hline
-						2 Worker (4 GB) & 2 Worker (4 GB) \\ \hline
+						2 Worker (2 GB) & 2 Worker (4 GB) \\ \hline
+						2 Worker (4 GB) & 2 Worker (2 GB) \\ \hline
 						2 Worker (campur) & 2 Worker (campur) \\ \hline
 						3 Worker & 1 Worker (2 GB) \\ \hline
 						3 Worker & 1 Worker (4 GB) \\ \hline
+						4 Worker & 4 Worker \\ \hline
 						
 						
 					\end{longtable}
 					
-					Pengujian dilakukan dengan kombinasi yang berbeda-beda pada setiap klaster. Kombinasi jumlah \textit{worker} dalam klaster untuk pengujian tertera pada Tabel \ref{tabelKombinasi}.
+					Untuk setiap kombinasi dilakukan pengujian dengan jumlah thread dari 300 hingga 1500 thread. Dari semua kombinasi yang dilakukan didapatkan hasil terbaik dengan waktu respon tercepat. Hasil waktu respon terbaik ini dibandingkan dengan hasil pengujian pada arsitektur sistem PPDB Surabaya 2015. Hasil yang didapatkan tertera pada Gambar \ref{gambarPerbandingan}.
 					
-					Untuk setiap kombinasi dilakukan pengujian dengan jumlah thread dari 300 hingga 1500 thread. Dari semua kombinasi yang dilakukan didapatkan hasil terbaik dengan waktu respon tercepat yang tertera pada Gambar \ref{gambarResponTerbaik}.
+					Nginx bekerja lebih cepat dibandingkan dengan balancer dengan NodeJS. Pada kenyataannya yang digunakan Nginx adalah 4 worker untuk semua akses, sementara NodeJS membagi worker menjadi klaster tersendiri untuk melayani setiap permintaan. Jika NodeJS menggunakan setiap worker untuk semua akses, waktu respon yang didapatkan jauh lebih lama dibandingkan dengan worker yang dibagi. Hasil pengujiaannya dapat dilihat pada lembar lampiran.
 					
 					\begin{figure}[h] 
 						\centering
-						\includegraphics[width=\linewidth]{contoh_img/viewworker2gb}
-						\caption{Waktu Respon Terbaik dengan Kombinasi Klaster}
-						\label{gambarResponTerbaik}
+						\includegraphics[width=\linewidth]{contoh_img/hasil-perbandingan}
+						\caption{Perbandingan Waktu Respon Nginx dan NodeJS}
+						\label{gambarPerbandingan}
 					\end{figure}
-					
-					Hasil waktu respon terbaik ini dibandingkan dengan hasil pengujian pada arsitektur sistem PPDB Surabaya 2015. Hasil yang didapatkan tertera pada Gambar xx.
-					
-					Nginx bekerja lebih cepat dibandingkan dengan balancer dengan NodeJS. Pada saat pengujian dengan menggunakan balancer NodeJS, permintaan akan terhenti sebelum selesai dieksekusi. Hal ini membuat waktu respon yang didapat menjadi lebih lama.
 					
 				\subsubsection{Permintaan Terlayani}
 					Pada percobaan dengan 1500 thread, balancer Node JS dengan 4 \textit{worker} pada klaster insert dan 1 \textit{worker} pada klaster view memberikan ketersediaan layanan lebih baik dibandingan dengan Nginx yang menggunakan 4 \textit{worker} untuk semua aktivitas. Perbedaan ini didapatkan dari hasil benchmark yang kemudian di rata-rata nilai error yang muncul setelah benchmark selesai. Hasil yang didapat
@@ -1004,23 +1026,23 @@ query_cache_size			= 64M
 						\endlastfoot
 						
 						% Isi Tabel
-						Entry No UASBN & 0,11\% & 21,89\% \\ \hline
-						Entry PIN & 0,11\% & 19,89\% \\ \hline
+						Entry No UASBN & 0,00\% & 21,89\% \\ \hline
+						Entry PIN & 0,00\% & 19,89\% \\ \hline
 						Inklusif & 0,00\% & 10,83\% \\ \hline
 						Jadwal & 0,00\% & 6,83\% \\ \hline
 						Ketentuan & 0,00\% & 17,17\% \\ \hline
-						Open Pendaftaran & 2,11\% & 9,00\% \\ \hline
-						Pendaftaran Dalam Kota & 0,11\% & 22,22\% \\ \hline
-						Pilih Sekolah1 & 0,11\% & 18,34\% \\ \hline
-						Pilih Sekolah2 & 0,11\% & 17,67\% \\ \hline
-						Pilih Sub Rayon & 0,11\% & 19,67\% \\ \hline
+						Open Pendaftaran & 0,00\% & 9,00\% \\ \hline
+						Pendaftaran Dalam Kota & 0,00\% & 22,22\% \\ \hline
+						Pilih Sekolah1 & 0,00\% & 18,34\% \\ \hline
+						Pilih Sekolah2 & 0,00\% & 17,67\% \\ \hline
+						Pilih Sub Rayon & 0,00\% & 19,67\% \\ \hline
 						Rekapsmaumum & 0,00\% & 5,50\% \\ \hline
-						Sambutan & 2,17\% & 6,67\% \\ \hline
-						Selesai & 0,11\% & 16,56\% \\ \hline
-						Simpan Permanen & 0,11\% & 16,89\% \\ \hline
-						Submit & 0,11\% & 16,89\% \\ \hline
+						Sambutan & 0,00\% & 6,67\% \\ \hline
+						Selesai & 0,00\% & 16,56\% \\ \hline
+						Simpan Permanen & 0,00\% & 16,89\% \\ \hline
+						Submit & 0,00\% & 16,89\% \\ \hline
 						Subrayon & 0,00\% & 12,17\% \\ \hline
-						TOTAL & 0,33\% & 15,60\% \\ \hline
+						TOTAL & 0,00\% & 15,60\% \\ \hline
 						
 					\end{longtable}
 					
@@ -1129,7 +1151,7 @@ query_cache_size			= 64M
 			\end{figure}
 		
 		\section{Installasi MongoDB}
-			MongoDB menyediakan repositori tersendiri untuk mengunduh MongoDB. Setelah terkoneksi dengan repositori yang dimiliki MongoDB, instalasi dapat berlanjut dengan menggunakan perintah \texttt{apt-get}. Berikut ini langkah-langkah instalasi MongoDB.
+			MongoDB menyediakan repositori tersendiri untuk mengunduh MongoDB. Setelah terkoneksi dengan repositori yang dimiliki MongoDB, instalasi dapat berlanjut dengan menggunakan perintah \texttt{apt-get}. Berikut ini langkah-langkah instalasi MongoDB.			
 			
 			\begin{itemize}
 				\item Tambahkan \textit{public key} yang digunakan untuk manajemen paket pada sistem operasi dengan perintah \texttt{sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10}.
@@ -1137,17 +1159,129 @@ query_cache_size			= 64M
 				\item Perbaharui basis data manajemen paket dengan perintah \texttt{sudo apt-get update}.
 				\item Install MongoDB ke komputer dengan perintah \texttt{sudo apt-get install -y mongodb-org}.
 				\item Setelah instalasi selesai jalankan MongoDB dengan perintah \texttt{sudo service mongod start}.
-				\item MongoDB siap digunakan dengan tampilan pada Gambar \ref{gambarCekMongoDB}.
-				\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
-					\centering
-					\includegraphics[width=\linewidth]{contoh_img/cekmongodb}
-					\caption{Contoh MongoDB dan Daftar Database}
-					\label{gambarCekMongoDB}
-				\end{figure}
-				
+				\item MongoDB siap digunakan dengan tampilan pada Gambar \ref{gambarCekMongoDB}.								
 			\end{itemize}
+			
+			\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+				\centering
+				\includegraphics[width=0.8\linewidth]{contoh_img/cekmongodb}
+				\caption{Contoh MongoDB dan Daftar Database}
+				\label{gambarCekMongoDB}
+			\end{figure}
 	
-	\chapter{Kode Sumber Model Koneksi MongoDB}
+	\chapter{Kode Sumber}
+		\section{Load Balancer}
+			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Kode Sumber Lengkap Load Balancer},label=loadBalancer]	
+var http = require('http'),
+httpProxy = require('http-proxy'),
+proxy = httpProxy.createProxyServer({}),
+url = require('url'),
+mongoose = require('mongoose');
+
+var clusterview_model = require('./model/clusterview_model')
+var clusterinsert_model = require('./model/clusterinsert_model')
+var aktivitas_model = require('./model/aktivitas_model')
+var path_model = require('./model/path_model')
+var setting_model = require('./model/setting_model')
+
+mongoose.connect('mongodb://127.0.0.1/tugasakhir');
+
+http.createServer(function(req, res) {
+
+	var cookie = req.headers.cookie;
+	var pengguna;
+	if (!cookie) cookie='kosong';
+	var awal = cookie.indexOf('csrf_cookie_name');
+	var akhir = cookie.indexOf(';', awal)
+	if (akhir > awal) {
+		pengguna = cookie.substring(awal, akhir)
+	}
+	else {
+		pengguna = cookie.substring(awal, cookie.length)
+	}
+	
+	var fullpath = url.parse(req.url).pathname;
+	var pathname = url.parse(req.url).pathname.split("/");
+	
+	var petugas;
+				
+	if (pathname[1] == '') {pathname[1]='home'}
+	
+	path_model.path.findOne({path: pathname[1]}, 'aksi', function(err, result){
+		if (err) return handleError(err);
+		console.log(result.aksi)
+		if (cookie=='kosong') {
+			setting_model.setting.findOne({setting:"default"}, 'pakehuruf', function(error, resul){
+				if (error) console.log(error)				
+				petugas = resul.pakehuruf
+				console.log(pengguna,";",result.aksi,";",fullpath,";",petugas)
+				proxy.web(req,res,{target : 'http://'+petugas},function(ee,aa){
+					console.log("ini error juga", ee)
+				});
+			})
+		}
+		else {
+			var cari = {cookie: pengguna, aksi: result.aksi}
+			aktivitas_model.findAktivitas(cari, function(erro, resu){				
+				if (erro) return console.log("kesalahan")
+				if (!resu) {
+					//dapatkan server yang dapat digunakan
+					if (result.aksi == 'view') {
+						clusterview_model.findOneClusterView(function(salah, hasil){
+							if (salah) return console.log(salah)
+							petugas = hasil.ip;
+							clusterview_model.updateLayani(hasil.ip, function(wa, we){
+								if (wa) return console.log(wa)
+								console.log(we);
+							})
+	
+							//tambah pengguna baru ke dalam basis data
+							var kumpul = {cookie: pengguna, ip: petugas, aksi: result.aksi}
+							aktivitas_model.tambahAktivitas(kumpul,function(errr, ress){
+								if (errr) return handleError(errr)
+								proxy.web(req, res, {target : 'http://'+petugas},function(ee,aa){
+									if(ee) console.log(ee)
+								});
+							})
+						})
+					}
+					else {
+						clusterinsert_model.findOneClusterInsert(function(salah, hasil){
+							if (salah) return console.log(salah)
+							petugas = hasil.ip;
+							clusterinsert_model.updateLayani(hasil.ip, function(wa, we){
+								if (wa) return console.log(wa)
+								console.log(we);
+							})
+	
+							//tambah pengguna baru ke dalam basis data
+							var kumpul = {cookie: pengguna, ip: petugas, aksi: result.aksi}
+							aktivitas_model.tambahAktivitas(kumpul,function(errr, ress){
+								if (errr) return handleError(errr)
+								proxy.web(req, res, {target : 'http://'+petugas}, function(ee,aa){
+									if(ee) console.log(ee)
+								});
+							})
+						})
+					}
+				}
+				else {		
+					proxy.web(req, res, {target : 'http://'+resu.ip}, function(ee, aa){
+					if(ee) console.log("di sini error", ee)
+					})
+				}
+			});
+		}
+	});
+	
+}).listen(80, function() {
+	console.log('proxy listening on port 80');
+});
+			
+			
+			
+			\end{lstlisting}
+		
 		\section{Aktivitas Model}
 			\begin{lstlisting}[frame=single,tabsize=2,breaklines,caption={Aktivitas Model untuk Koleksi Aktivitas},label=aktivitasModel]	
 var mongoose = require('mongoose');
@@ -1386,6 +1520,56 @@ exports.ubahSettingWaktu = function(data, callback){
 }
 			
 			\end{lstlisting}
+	
+	\chapter{Grafik Uji Coba dengan berbagai Kombinasi}
+		\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+			\centering
+			\includegraphics[width=0.85\linewidth]{contoh_img/hasil/1-3-bagus}
+			\caption{Kombinasi 1 Insert (bagus) dan 3 View}
+			\label{gambar1-3bagus}
+		\end{figure}
+		
+		\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+			\centering
+			\includegraphics[width=0.85\linewidth]{contoh_img/hasil/1-3-jelek}
+			\caption{Kombinasi 1 Insert (jelek) dan 3 View}
+			\label{gambar1-3jelek}
+		\end{figure}
+		
+		\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+			\centering
+			\includegraphics[width=0.85\linewidth]{contoh_img/hasil/2-2-campur}
+			\caption{Kombinasi 2 Insert dan 2 View (campur)}
+			\label{gambar2-2campur}
+		\end{figure}
+		
+		\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+			\centering
+			\includegraphics[width=0.85\linewidth]{contoh_img/hasil/2-2-ibagus}
+			\caption{Kombinasi 2 Insert (bagus) dan 2 View}
+			\label{gambar2-2ibagus}
+		\end{figure}
+		
+		\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+			\centering
+			\includegraphics[width=0.85\linewidth]{contoh_img/hasil/2-2-vbagus}
+			\caption{Kombinasi 2 View (bagus) dan 2 Insert}
+			\label{gambar2-2vbagus}
+		\end{figure}
+		
+		\begin{figure}[h] % h = pasti berada di bawah teks yang ada di atas
+			\centering
+			\includegraphics[width=0.85\linewidth]{contoh_img/hasil/3-1-bagus}
+			\caption{Kombinasi 3 Insert dan 1 View (bagus)}
+			\label{gambar3-1bagus}
+		\end{figure}
+		
+		\begin{figure}[t] % h = pasti berada di bawah teks yang ada di atas
+			\centering
+			\includegraphics[width=0.85\linewidth]{contoh_img/hasil/3-1-jelek}
+			\caption{Kombinasi 3 Insert dan 1 View (jelek)}
+			\label{gambar3-1jelek}
+		\end{figure}
 		
 
 \backmatter % Lampiran tanpa judul LAMPIRAN X, biasanya untuk BIODATA PENULIS
