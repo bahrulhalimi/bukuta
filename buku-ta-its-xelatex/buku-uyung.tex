@@ -10,7 +10,7 @@
 
 
 % \title{Judul Bahasa Indonesia}{Judul Bahasa Inggris}
-\title{Rancang Bangun Sistem Penyeimbang Beban pada Klaster Server dengan Prioritas Berbasis Konten dan Kontrol Ketersediaan Layanan}{Design and Implementation of Load Balancing System with Content Priority and Availability Control}{KI1502} 
+\title{Rancang Bangun Sistem Penyeimbang Beban pada Klaster Server dengan Prioritas Berbasis Konten dan Kontrol Ketersediaan Layanan}{Design and Implementation of Load Balancing System with Content Priority and Availability Control}{KI141502} 
 
 % \author{Nama Lengkap}{NRP}
 \author{Bahrul Halimi}{5111100014}
@@ -1045,6 +1045,18 @@ query_cache_size			= 64M
 						TOTAL & 0,00\% & 15,60\% \\ \hline
 						
 					\end{longtable}
+				
+				\subsubsection{Distribusi Beban}
+					Pada pengujian ini dilakukan benchmark dengan total 500 thread dimana 500 thread ini dipisah menjadi dua bagian. Bagian pertama menggunakan \texttt{cookie} yang teracak, dalam artian setiap thread yang berjalan akan menggunakan \texttt{cookie} yang berbeda-beda. Sementara bagian kedua adalah thread yang menggunakan 20 \texttt{cookie} yang sama dan berulang ketika setiap \texttt{cookie} sudah digunakan. Masing-masing bagian akan menjalankan 250 thread. 
+					
+					Pengujian hanya dilakukan pada salah satu klaster, yaitu klaster view. Pengujian ini tidak dilakukan pada dua klaster dan tidak dibandingkan karena memang beban untuk akses ke halaman informasi dan halaman insert berbeda. Hasil pengujian distribusi beban pada klaster view tertera pada Gambar \ref{gambarDistribusi}.
+					
+					\begin{figure}[h] 
+						\centering
+						\includegraphics[width=0.8\linewidth]{contoh_img/distribusi}
+						\caption{Distribusi Beban pada Klaster View}
+						\label{gambarDistribusi}
+					\end{figure}
 					
 		\chapter{Penutup}
 			Bab ini membahas kesimpulan yang dapat diambil dari tujuan pembuatan sistem dan hubungannya dengan hasil uji coba dan evaluasi yang telah dilakukan. Selain itu, terdapat beberapa saran yang bisa dijadikan acuan untuk melakukan pengembangan dan penelitian lebih lanjut.
@@ -1052,7 +1064,7 @@ query_cache_size			= 64M
 			\section{Kesimpulan}
 				Dari proses perancangan, implementasi dan pengujian terhadap sistem, dapat diambil beberapa kesimpulan berikut:
 				\begin{enumerate}
-					\item Pembagian beban kerja berdasarkan konten permintaan pengguna dilakukan dengan membaca URL yang diakses pengguna. Pembagian beban kerja berhasil dilakukan dengan pengujian beban kerja yang menghasilkan 100\% sukses. 
+					\item Pembagian beban kerja berdasarkan konten permintaan pengguna dilakukan dengan membaca URL yang diakses pengguna. Pembagian beban kerja berhasil dilakukan dengan pengujian beban kerja yang menghasilkan 100\% sukses. Distribusi beban menjadi tidak merata ketika parameter yang digunakan untuk menjaga pengguna tetap dilayani oleh \textit{worker} yang sama adalah \texttt{cookie}. 
 					\item Berdasarkan hasil pengujian didapatkan penggunaan CPU yang meningkat sehingga menyebabkan waktu respon yang makin lama. Hal ini disebabkan NodeJS membuat sebuah thread untuk melayani setiap permintaan baru yang masuk ke sistem.
 					\item Kontrol ketersediaan layanan dapat dilakukan dengan melakukan pengecekan servis pada \textit{worker}. Untuk mengeluarkan \textit{worker} dari aktivitas melayani pengguna, tidak dibutuhkan mekanisme untuk merestart sistem. Mekanisme ini menggunakan basis data sebagai dasar balancer untuk meneruskan permintaan.
 					\item Dibandingkan dengan sistem yang sudah berjalan sebelumnya, dengan menggunakan Nginx sebagai balancer, NodeJS memberikan hasil penggunaan CPU yang buruk (100\% untuk 1500 thread) sementara Nginx memberikan hasil yang memuaskan (kurang dari 10\% untuk 1500 thread).
@@ -1063,6 +1075,7 @@ query_cache_size			= 64M
 				\begin{itemize}
 					\item Mekanisme load balancing yang sudah dirancang perlu ditambah dengan mekanisme pengecekan ketersediaan \textit{worker}. Ketersediaan dapat berupa penggunaan CPU dan memori serta batas \textit{open file} jika memang proses pada \textit{worker} dibatasi \textit{open file}.
 					\item Kontrol ketersediaan layanan perlu ditambah parameter untuk memastikan apakah \textit{worker} benar-benar tidak bisa memberikan layanan ke pengguna.
+					\item Diperlukan mekanisme lain untuk menjaga pengguna dilayani \textit{worker} yang sama hingga akhir selain menggunakan \texttt{cookie}.
 				\end{itemize}
 				
 		
