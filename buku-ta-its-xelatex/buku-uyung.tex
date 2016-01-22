@@ -1058,6 +1058,17 @@ query_cache_size			= 64M
 						\label{gambarDistribusi}
 					\end{figure}
 					
+					Dengan hasil yang tidak seimbang ini, kemudian dilakukan perubahan mekanisme penyeimbang beban. Awal mekanisme yang digunakan adalah cookie-based dengan pengecekan apakah cookie sudah ada atau belum untuk mendapatkan worker yang akan melayani. Mekanisme ini memaksa pengguna yang sama dilayani oleh worker yang sama. Kemudian mekanisme diganti dengan menggunakan cookie-based dan round robin, dimana cookie tetap diambil namun \textit{worker} yang melayani dipilih dengan menggunakan algoritma round robin.
+					
+					Mekanisme baru diuji dengan melakukan benchmark yang sama seperti sebelumnya. Dibandingkan dengan mekanisme sebelumnya, hasil yang didapatkan tertera pada Gambar \ref{gambarDistribusiBanding}.
+					
+					\begin{figure}[h] 
+						\centering
+						\includegraphics[width=0.8\linewidth]{contoh_img/banding-distribusi}
+						\caption{Perbandingan Distribusi Beban Cookie-Based dan Cookie-Based dan Round-Robin}
+						\label{gambarDistribusiBanding}
+					\end{figure}
+					
 		\chapter{Penutup}
 			Bab ini membahas kesimpulan yang dapat diambil dari tujuan pembuatan sistem dan hubungannya dengan hasil uji coba dan evaluasi yang telah dilakukan. Selain itu, terdapat beberapa saran yang bisa dijadikan acuan untuk melakukan pengembangan dan penelitian lebih lanjut.
 			
@@ -1075,7 +1086,7 @@ query_cache_size			= 64M
 				\begin{itemize}
 					\item Mekanisme load balancing yang sudah dirancang perlu ditambah dengan mekanisme pengecekan ketersediaan \textit{worker}. Ketersediaan dapat berupa penggunaan CPU dan memori serta batas \textit{open file} jika memang proses pada \textit{worker} dibatasi \textit{open file}.
 					\item Kontrol ketersediaan layanan perlu ditambah parameter untuk memastikan apakah \textit{worker} benar-benar tidak bisa memberikan layanan ke pengguna.
-					\item Diperlukan mekanisme lain untuk menjaga pengguna dilayani \textit{worker} yang sama hingga akhir selain menggunakan \texttt{cookie}.
+					\item Diperlukan mekanisme lain untuk menjaga pengguna dilayani \textit{worker} yang sama hingga akhir selain menggunakan \texttt{cookie}. Salah satunya dengan round-robin, namun mekanisme ini tidak dapat memastikan worker yang sama melayani pengguna yang sama.
 				\end{itemize}
 				
 		
